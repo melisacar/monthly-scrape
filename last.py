@@ -61,18 +61,18 @@ def transform_excel_file(excel_content):
     """
     df = pd.read_excel(BytesIO(excel_content), sheet_name=None, skiprows=3)
 
-    # sheets = df.keys()
+    sheets = df.keys()
 
-    # print(sheets)
+    print(sheets)
 
     new_data = []
 
-    # for s in sheets:
-    #     s_df = df[s]
+    for s in sheets:
+       s_df = df[s]
 
-        # result_df = s_df.iloc[0:59, [0, 4, 5, 6]]
+       result_df = s_df.iloc[0:59, [0, 4, 5, 6]]
 
-        # print(result_df)
+       print(result_df)
 
 
 def main():
@@ -99,5 +99,5 @@ def main():
         else:
             print(f"Skipping {href} due to download error.")
 
-if _name_ == "_main_":
-    main()
+
+main()
