@@ -1,6 +1,7 @@
-selenium
+#selenium
 pandas 
 openpyxl 
 pytest
 bs4 
 requests
+schedule
