@@ -56,6 +56,26 @@ def download_excel_file(href):
         print(f"Failed to retrieve {href}, status code: {response.status_code}") 
         return None
 
+def extract_year_month(date_info):
+    """
+    Extracts the year and month from the given date information string.
+    """
+    # Map Turkish month names to numerical values
+    month_mapping = {
+        "OCAK": "01", "ŞUBAT": "02", "MART": "03", "NİSAN": "04",
+        "MAYIS": "05", "HAZİRAN": "06", "TEMMUZ": "07", "AĞUSTOS": "08",
+        "EYLÜL": "09", "EKİM": "10", "KASIM": "11", "ARALIK": "12"
+    }
+    # Split the date_info to get the year and month part
+    parts = date_info.split()
+    year = parts[0]  # The first part is the year, e.g., "2024"
+    month_text = parts[1]  # The second part is the month in text, e.g., "MART"
+    
+    # Convert month text to its corresponding number
+    month = month_mapping.get(month_text.upper(), "01")  # Default to "01" if month not found
+    
+    return f"{year}-{month}"
+
 def transform_excel_file(excel_content):
     """
     Reads the Excel content into a pandas DataFrame and processes it.
@@ -67,12 +87,15 @@ def transform_excel_file(excel_content):
     for sheet_name, sheet_data in sheets_dict.items():
         
         additional_info = sheet_data.iloc[0, 4]  # Tarih hücresini seç.
+        formatted_date = extract_year_month(additional_info)  # Convert to "YYYY-MM" format
 
-        processed_data = sheet_data.iloc[2:59, [0, 4, 5, 6]]
+        total_rows = sheet_data.shape[0]
+
+        processed_data = sheet_data.iloc[2:total_rows-8, [0, 4, 5, 6]]
         processed_data.columns = ['Havalimanı', 'İç Hat', 'Dış Hat', 'Toplam']
         processed_data.fillna(0, inplace=True) 
         processed_data['Kategori'] = sheet_name # Sheet isimlerini Kategori sütunu olarak ekle.
-        processed_data['Tarih'] = additional_info  # Tarihi yeni sütun olarak ekle.
+        processed_data['Tarih'] = formatted_date  # Add the formatted date
 
         all_sheets.append(processed_data) # İşlenen DataFrame'i all_sheets listesine ekle.
     
@@ -132,3 +155,5 @@ def main():
         print("Data has been saved to 'DHMI_all.xlsx'.")
 
 main()
+
+
