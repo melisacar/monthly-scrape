@@ -1,1 +1,5 @@
+# Ignore macOS specific files
 .DS_Store
+
+# Ignore Excel temporary files
+~$*
