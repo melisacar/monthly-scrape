@@ -10,9 +10,9 @@ def disable_ssl_warnings():
     """
     Disables SSL certificate verification and suppresses InsecureRequestWarning.
     """
-    # Disable SSL certificate verification (be cautious with this)
+    # Disable SSL certificate verification (be cautious with this).
     ssl._create_default_https_context = ssl._create_unverified_context
-    # Suppress only the InsecureRequestWarning from urllib3
+    # Suppress only the InsecureRequestWarning from urllib3.
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def fetch_page_content(url):
@@ -45,12 +45,12 @@ def download_excel_file(href):
     Downloads the Excel file from the given href.
     Returns the content of the file if successful, else None.
     """
-    # Encode the URL to handle non-ASCII characters
+    # Encode the URL to handle non-ASCII characters.
     encoded_href = urllib.parse.quote(href, safe=':/')
     # Make the request while ignoring SSL verification
     response = requests.get(encoded_href, verify=False)
     if response.status_code == 200:
-        #print(f"Downloaded file size: {len(response.content)} bytes") # Dosya boyutunu yazdır (kontrol-1).
+        #print(f"Downloaded file size: {len(response.content)} bytes") # Print the size of the downloaded file (for control).
         return response.content
     else:
         print(f"Failed to retrieve {href}, status code: {response.status_code}") 
@@ -80,28 +80,33 @@ def transform_excel_file(excel_content):
     """
     Reads the Excel content into a pandas DataFrame and processes it.
     """
-    sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None) #Tüm sheetleri al.
+    sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None) # Read all sheets into a dictionary.
     
     all_sheets = []
 
     for sheet_name, sheet_data in sheets_dict.items():
         
-        additional_info = sheet_data.iloc[0, 4]  # Tarih hücresini seç.
-        formatted_date = extract_year_month(additional_info)  # Convert to "YYYY-MM" format
+        additional_info = sheet_data.iloc[0, 4]  # Select the date cell from the first row.
+        formatted_date = extract_year_month(additional_info)  # Convert to "YYYY-MM" format.
 
-        total_rows = sheet_data.shape[0]
+        # Find the row number that contains "DHMİ TOPLAMI" phrase.
+        dhmi_toplami_index = sheet_data[sheet_data.iloc[:,0].str.contains("DHMİ TOPLAMI", na=False)].index.min() #DHMI TOPLAM ifadesinin geçtiği ilk satırı alır.
 
-        processed_data = sheet_data.iloc[2:total_rows-8, [0, 4, 5, 6]]
+        # If "DHMİ TOPLAMI" is found, take the data up to this row.
+        # If not found, take up to the 9th row from the end.
+        end_row = dhmi_toplami_index if dhmi_toplami_index else sheet_data.shape[0] - 8
+
+        processed_data = sheet_data.iloc[2:end_row, [0, 4, 5, 6]]
         processed_data.columns = ['Havalimanı', 'İç Hat', 'Dış Hat', 'Toplam']
         processed_data.fillna(0, inplace=True) 
-        processed_data['Kategori'] = sheet_name # Sheet isimlerini Kategori sütunu olarak ekle.
-        processed_data['Tarih'] = formatted_date  # Add the formatted date
+        processed_data['Kategori'] = sheet_name # # Add sheet names as a new column. 
+        processed_data['Tarih'] = formatted_date  # Add the formatted date.
 
-        all_sheets.append(processed_data) # İşlenen DataFrame'i all_sheets listesine ekle.
+        all_sheets.append(processed_data) # Append the processed DataFrame to the list.
     
-    merged_all_sheets = pd.concat(all_sheets) #Tüm dfleri birleştir.
+    merged_all_sheets = pd.concat(all_sheets) # Concatenate all DataFrames into one.
 
-    final_data = []
+    final_data = [] # List to store final transformed data.
 
     for index, row in merged_all_sheets.iterrows():
         havalimani = row['Havalimanı']
@@ -111,46 +116,46 @@ def transform_excel_file(excel_content):
         kategori = row['Kategori']
         tarih = row['Tarih']
 
-        final_data.append([havalimani, 'İç Hat', ic_hat, kategori, tarih]) #append fonksiyonu tek bir parametre alır, bu yüzden bunu bir liste olarak ekle.
+        final_data.append([havalimani, 'İç Hat', ic_hat, kategori, tarih]) # Append function takes single parameter, thus take as a list.
         final_data.append([havalimani, 'Dış Hat', dis_hat, kategori, tarih])
         final_data.append([havalimani, 'Toplam', toplam, kategori, tarih])
     
 
-    final_df = pd.DataFrame(final_data, columns=['Havalimanı', 'Hat Türü', 'Num', 'Kategori', 'Tarih']) # main fonksiyonunda concatlanacağı için df çevirildi.
+    final_df = pd.DataFrame(final_data, columns=['Havalimanı', 'Hat Türü', 'Num', 'Kategori', 'Tarih']) # Transformed to df to use concat in main() func.
     return final_df
 
 def main():
-    # Disable SSL warnings
+    # Disable SSL warnings.
     disable_ssl_warnings()
 
-    # URL of the site
+    # URL of the site.
     url = "https://www.dhmi.gov.tr/Sayfalar/Istatistikler.aspx"
 
     # Fetch the page content
     html_content = fetch_page_content(url)
     if not html_content:
-        return  # Exit if the page couldn't be retrieved
+        return  # Exit if the page couldn't be retrieved.
 
-    # Parse the HTML to get Excel links
+    # Parse the HTML to get Excel links.
     hrefs = parse_excel_links(html_content)
 
-    all_data = []  # List to hold all df DataFrames
+    all_data = []  # List to hold all df DataFrames.
 
-    # Loop through the URLs and process each Excel file
+    # Loop through the URLs and process each Excel file.
     for href in hrefs:
         print(f"Processing file from {href}")
         excel_content = download_excel_file(href)
         if excel_content:
-            df = transform_excel_file(excel_content)  # Transform the file
-            all_data.append(df)  # Append each df to the list
+            df = transform_excel_file(excel_content)  # Transform the file.
+            all_data.append(df)  # Append each df to the list.
         else:
             print(f"Skipping {href} due to download error.")
     
-    # Concatenate all DataFrames into a single DataFrame
+    # Concatenate all DataFrames into a single DataFrame.
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
 
-        # Save the final DataFrame to a single Excel file
+        # Save the final DataFrame to a single Excel file.
         final_df.to_excel("DHMI_all.xlsx", index=False)
         print("Data has been saved to 'DHMI_all.xlsx'.")
 
