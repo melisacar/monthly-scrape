@@ -50,7 +50,7 @@ def download_excel_file(href):
     # Make the request while ignoring SSL verification
     response = requests.get(encoded_href, verify=False)
     if response.status_code == 200:
-        #print(f"Downloaded file size: {len(response.content)} bytes") # Dosya boyutunu yazdır (kontrol-1).
+        #print(f"Downloaded file size: {len(response.content)} bytes") # Control
         return response.content
     else:
         print(f"Failed to retrieve {href}, status code: {response.status_code}") 
@@ -80,25 +80,29 @@ def transform_excel_file(excel_content):
     """
     Reads the Excel content into a pandas DataFrame and processes it.
     """
-    sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None) #Tüm sheetleri al.
+    sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None) # All sheets
     
     all_sheets = []
 
     for sheet_name, sheet_data in sheets_dict.items():
         
-        additional_info = sheet_data.iloc[0, 4]  # Tarih hücresini seç.
+        additional_info = sheet_data.iloc[0, 4]  # Select the cell containing the date info
         formatted_date = extract_year_month(additional_info)  # Convert to "YYYY-MM" format
-        total_rows = sheet_data.shape[0]
+         
+         # Find the row containing "DHMİ TOPLAMI" feature.
+        dhmi_toplami_index = sheet_data[sheet_data.iloc[:,0].str.contains("DHMİ TOPLAMI", na=False)].index.min() #DHMI TOPLAM ifadesinin geçtiği ilk satırı alır.
 
-        processed_data = sheet_data.iloc[2:total_rows-8, [0, 4, 5, 6]]
+        end_row = dhmi_toplami_index if dhmi_toplami_index else sheet_data.shape[0] - 8
+
+        processed_data = sheet_data.iloc[2:end_row, [0, 4, 5, 6]]
         processed_data.columns = ['Havalimanı', 'İç Hat', 'Dış Hat', 'Toplam']
         processed_data.fillna(0, inplace=True) 
-        processed_data['Kategori'] = sheet_name # Sheet isimlerini Kategori sütunu olarak ekle.
+        processed_data['Kategori'] = sheet_name # Add sheet names as a column
         processed_data['Tarih'] = formatted_date  # Add the formatted date
 
-        all_sheets.append(processed_data) # İşlenen DataFrame'i all_sheets listesine ekle.
+        all_sheets.append(processed_data) # Add DataFrames to all_sheets list
     
-    merged_all_sheets = pd.concat(all_sheets) #Tüm dfleri birleştir.
+    merged_all_sheets = pd.concat(all_sheets) # Concat all df's
 
     final_data = []
 
@@ -110,12 +114,12 @@ def transform_excel_file(excel_content):
         kategori = row['Kategori']
         tarih = row['Tarih']
 
-        final_data.append([havalimani, 'İç Hat', ic_hat, kategori, tarih]) #append fonksiyonu tek bir parametre alır, bu yüzden bunu bir liste olarak ekle.
+        final_data.append([havalimani, 'İç Hat', ic_hat, kategori, tarih]) 
         final_data.append([havalimani, 'Dış Hat', dis_hat, kategori, tarih])
         final_data.append([havalimani, 'Toplam', toplam, kategori, tarih])
     
 
-    final_df = pd.DataFrame(final_data, columns=['Havalimanı', 'Hat Türü', 'Num', 'Kategori', 'Tarih']) # main fonksiyonunda concatlanacağı için df çevirildi.
+    final_df = pd.DataFrame(final_data, columns=['Havalimanı', 'Hat Türü', 'Num', 'Kategori', 'Tarih']) 
     return final_df
 
 def main():
