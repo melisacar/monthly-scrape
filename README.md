@@ -1,6 +1,4 @@
-
 ## Project Overview
-
 - This Python script automates the process of scraping, downloading, and transforming monthly airport statistics from the DHMI (State Airports Authority) website. While the script requires manual execution, it is particularly useful for gathering and organizing data from multiple Excel files into a single, structured dataset. The output is an Excel file named DHMI_all.xlsx, which contains organized data across various airports in Türkiye, categorized by type of flight (domestic, international, and total) and date. 
 
 - In the next stage of development, the script will be enhanced to fully automate the data retrieval process, allowing it to check for new data periodically and update the dataset automatically.
