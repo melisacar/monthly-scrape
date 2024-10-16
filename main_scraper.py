@@ -160,5 +160,3 @@ def main():
         print("Data has been saved to 'DHMI_all.xlsx'.")
 
 main()
-
-
