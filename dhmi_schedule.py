@@ -93,7 +93,7 @@ def extract_year_month(date_info):
     month_text = parts[1]  # The second part is the month in text, e.g., "MART"
     
     # Convert month text to its corresponding number
-    month = month_mapping.get(month_text.upper(), "01")  # Default to "01" if month not found
+    month = month_mapping.get(month_text.upper(), "00")  # Default to "01" if month not found
     
     return f"{year}-{month}"
 
@@ -120,7 +120,7 @@ def transform_excel_file(excel_content):
         processed_data = sheet_data.iloc[2:end_row, [0, 4, 5, 6]]
         processed_data.columns = ['Havalimanı', 'İç Hat', 'Dış Hat', 'Toplam']
         processed_data.fillna(0, inplace=True) 
-        processed_data['Kategori'] = sheet_name # # Add sheet names as a new column. 
+        processed_data['Kategori'] = sheet_name # Add sheet names as a new column. 
         processed_data['Tarih'] = formatted_date  # Add the formatted date.
 
         all_sheets.append(processed_data) # Append the processed DataFrame to the list.
@@ -218,11 +218,4 @@ while True:
     
     tm.sleep(60)
 
-
-
-
-
-
-
-
-
+# This code does not check whether there are new month data available.
