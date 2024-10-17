@@ -160,3 +160,4 @@ def main():
         print("Data has been saved to 'DHMI_all.xlsx'.")
 
 main()
+# This code does not check whether there are new month data available.
