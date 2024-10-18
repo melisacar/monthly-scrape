@@ -5,7 +5,6 @@ import urllib.parse
 from io import BytesIO
 import ssl
 import urllib3
-
 import schedule
 import time as tm
 import pytz
@@ -145,7 +144,7 @@ def transform_excel_file(excel_content):
     final_df = pd.DataFrame(final_data, columns=['Havalimanı', 'Hat Türü', 'Num', 'Kategori', 'Tarih']) # Transformed to df to use concat in main() func.
     return final_df
 
-def dhmi_scrape():
+def main_schedule():
     # Disable SSL warnings
     disable_ssl_warnings()
 
@@ -187,7 +186,7 @@ def job():
     Job to run on schedule.
     """
     print("Job started...")
-    dhmi_scrape()
+    main_schedule()
     print("Job completed.")    
 
 #Use tz identifier Europe/Istanbul for UTC+3.
@@ -199,23 +198,15 @@ schedule.every().monday.at("10:30").do(job)
 schedule.every().tuesday.at("10:30").do(job)
 schedule.every().wednesday.at("10:30").do(job)
 schedule.every().thursday.at("10:30").do(job)
-schedule.every().friday.at("10:30").do(job)
+schedule.every().friday.at("11:49").do(job)
 
-while True:
-    current_date = datetime.now(timezone)
-    #print(f"Current time: {current_date.strftime('%H:%M')}")
+ # The last day of the first month of the next year (Specific date given).
+end_date = datetime(2025, 1, 31, 23, 59, 59, tzinfo=timezone)
 
-     # The last day of the first month of the next year.
-    end_date = datetime(current_date.year + 1, 1, 31, tzinfo=timezone)
-
-    # If the current date is before January 31 of the next year, execute the job.
-    if current_date < end_date:
-        #print("Checking for scheduled jobs...")
-        schedule.run_pending()
-    else:
-        #print("Job stopped.")
-        break
-    
-    tm.sleep(60)
+# Run the schedule until the specified end date
+while datetime.now(timezone) < end_date:
+    schedule.run_pending()
+    tm.sleep(30)  # Check every minute
+# Ctrl + c for quit.
 
 # This code does not check whether there are new month data available.
