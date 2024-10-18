@@ -168,16 +168,16 @@ def transform_excel_file(excel_content):
     final_data = [] # List to store final transformed data.
 
     for index, row in merged_all_sheets.iterrows():
-        havalimani = row['Havalimanı']
-        ic_hat = row['İç Hat']
-        dis_hat = row['Dış Hat']
-        toplam = row['Toplam']
-        kategori = row['Kategori']
-        tarih = row['Tarih']
+        airport = row['Havalimanı']
+        domestic = row['İç Hat']
+        international = row['Dış Hat']
+        total = row['Toplam']
+        category = row['Kategori']
+        date = row['Tarih']
 
-        final_data.append([havalimani, 'İç Hat', ic_hat, kategori, tarih]) # Append function takes single parameter, thus take as a list.
-        final_data.append([havalimani, 'Dış Hat', dis_hat, kategori, tarih])
-        final_data.append([havalimani, 'Toplam', toplam, kategori, tarih])
+        final_data.append([airport, 'İç Hat', domestic, category, date]) # Append function takes single parameter, thus take as a list.
+        final_data.append([airport, 'Dış Hat', international, category, date])
+        final_data.append([airport, 'Toplam', total, category, date])
     
 
     final_df = pd.DataFrame(final_data, columns=['Havalimanı', 'Hat Türü', 'Num', 'Kategori', 'Tarih']) # Transformed to df to use concat in main() func.
