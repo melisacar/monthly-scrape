@@ -1,7 +1,7 @@
 # **DHMI Monthly Data Automation Project**
 - Description: This project automates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts that work together to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
 
-### Table of Contents
+## Table of Contents
 1. File Descriptions
     - [main_scraper.py](#data-scraper-for-dhmi-statistics-page) 
     - [main_month_checker.py](#monthly-data-checker)
@@ -10,8 +10,8 @@
 3. [File Structure](#file-structure)
 4. [License](#license)
 
-### File Descriptions
-#### **Data Scraper for DHMI Statistics Page**
+## **File Descriptions**
+### **Data Scraper for DHMI Statistics Page**
 -  Description: The main.py script aims to scrape data from the DHMI (State Airports Authority) website, download Excel files, and process the extracted data. It focuses on extracting relevant information such as airport names and corresponding traffic data (domestic, international, and total). The processed data is then structured into a standardized format to facilitate further analysis and reporting.
 
 - The [main_scraper.py](https://github.com/melisacar/monthly-scrape/blob/main/main_scraper.py) script performs the following tasks:
@@ -21,7 +21,7 @@
     - Downloads and processes each Excel file, transforming the data into a structured format.
     - Saves the combined data into a single Excel file named `DHMI_all.xlsx`.
 
-##### **Installation**
+#### **Installation**
 1. Clone the Repo
 ```bash
 git clone https://github.com/melisacar/monthly-scrape.git
@@ -37,7 +37,7 @@ pip3 install -r requirements.txt
 python3 main_scraper.py
 ```
 
-#### **Monthly Data Checker**
+### **Monthly Data Checker**
 - Description: Automates the process of checking for new monthly data from the DHMI (State Airports Authority) website, downloading the latest Excel files, and updating a local Excel file with the new data.
 
 - The [main_month_checker.py](https://github.com/melisacar/monthly-scrape/blob/main/main_month_checker.py) script performs the following tasks:
@@ -51,7 +51,7 @@ python3 main_scraper.py
     - Transform Excel File: Processes the downloaded Excel file, extracts relevant data, and formats it for consistent usage.
     - Update Local File: Merges the newly acquired data with the existing data in DHMI_all.xlsx and saves the updated file.
 
-##### **Installation**
+#### **Installation**
 1. Clone the Repo
 ```bash
 git clone https://github.com/melisacar/monthly-scrape.git
@@ -67,7 +67,7 @@ pip3 install -r requirements.txt
 python3 main_month_checker.py
 ```
 
-#### **Monthly Data Scheduler**
+### **Monthly Data Scheduler**
 - Description: Automates the retrieval of monthly data from the DHMI (State Airports Authority) website. The script fetches Excel files containing statistics, processes the data, and saves it into a unified Excel file. It runs on a predefined schedule to ensure that data is regularly updated.
 
 - The [main_schedule.py](https://github.com/melisacar/monthly-scrape/blob/main/main_schedule.py) script performs the following tasks:
@@ -82,7 +82,7 @@ python3 main_month_checker.py
     - Scheduled Job: Uses the schedule library to run the data retrieval process at specific times on weekdays.
     - End Date Handling: Runs the scheduled job until a specified end date.
 
-##### **Installation**
+#### **Installation**
 1. Clone the Repo
 ```bash
 git clone https://github.com/melisacar/monthly-scrape.git
