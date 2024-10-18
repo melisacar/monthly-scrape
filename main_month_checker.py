@@ -5,7 +5,7 @@ import urllib.parse
 from io import BytesIO
 import ssl
 import urllib3
-from datetime import datetime
+#from datetime import datetime
 
 # Map month numbers to names
 months_mapping = {
@@ -117,6 +117,7 @@ def download_excel_file(href):
 def extract_year_month(date_info):
     """
     Extracts the year and month from the given date information string.
+    Converts month name to its numerical value and formats as "YYYY-MM".
     """
     # Map Turkish month names to numerical values
     month_mapping = {
@@ -130,7 +131,7 @@ def extract_year_month(date_info):
     month_text = parts[1]  # The second part is the month in text, e.g., "MART"
     
     # Convert month text to its corresponding number
-    month = month_mapping.get(month_text.upper(), "01")  # Default to "01" if month not found
+    month = month_mapping.get(month_text.upper(), "00")  # Default to "01" if month not found
     
     return f"{year}-{month}"
 
@@ -183,6 +184,9 @@ def transform_excel_file(excel_content):
     return final_df
 
 def main_check():
+    """
+    Main function to check for new data, download, and update the Excel file if needed.
+    """
     # Disable SSL warnings.
     disable_ssl_warnings()
 
@@ -212,15 +216,19 @@ def main_check():
         if excel_content:
             df = transform_excel_file(excel_content) 
             print("Yeni veri bulundu. Mevcut dosyaya ekleniyor...")
-            # Using ExcelWriter to append the DataFrame to the existing Excel file
-            with pd.ExcelWriter("DHMI_all.xlsx", engine='openpyxl', mode='w') as writer:
-                current_time = datetime.now().strftime("%Y-%m-%d_%H-%M") # Use the current timestamp for a unique sheet name (why? see below comment).
-                # ValueError: Sheet 'Sheet1' already exists and if_sheet_exists is set to 'error'.
-                df.to_excel(writer, sheet_name=f"retrieved_{current_time}", header=False, index=False)  # Add.
+            
+            try:
+                df_existing = pd.read_excel("DHMI_all.xlsx")
+            except FileNotFoundError:
+                df_existing = pd.DataFrame()
+            
+            combined_df = pd.concat([df_existing, df], ignore_index=True)
+
+            combined_df.to_excel("DHMI_all.xlsx", index=False)
+            print("Yeni veri başarıyla eklendi.")
         else:
             print(f"{latest_href} indirme hatasından dolayı atlandı.")
     else:
         print("Yeni bir ay verisi bulunamadı.")
 
 main_check()
-# Sheet overwrite revize edilecek.
