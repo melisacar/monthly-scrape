@@ -1,8 +1,7 @@
 # **DHMI Monthly Data Automation Project**
-#### Description
-This project automates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts that work together to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
+- Description: This project automates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts that work together to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
 
-## Table of Contents
+### Table of Contents
 1. File Descriptions
     - [main_scraper.py](#data-scraper-for-dhmi-statistics-page) 
     - [main_month_checker.py](#monthly-data-checker)
