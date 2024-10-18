@@ -7,7 +7,7 @@ This project automates the retrieval and processing of monthly data from the DHM
     - [main_scraper.py](#data-scraper-for-dhmi-statistics-page) 
     - [main_month_checker.py](#monthly-data-checker)
     - [main_schedule.py](#monthly-data-scheduler)
-2. [Requirements](#)
+2. [Requirements](#requirements)
 3. [File Structure](#file-structure)
 4. [License](#license)
 
