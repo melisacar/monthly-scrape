@@ -167,4 +167,4 @@ monthly_scrape/
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/melisacar/monthly-scrape/blob/main/LICENSE.md) file for details.
 
 ### **Improvements**
-    - [ ]: New column named "Retrieved at" will be added. 
+- [ ] : New column named "Retrieved at" will be added. 
