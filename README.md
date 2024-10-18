@@ -1,5 +1,5 @@
 # **DHMI Monthly Data Automation Project**
-- Description: This project automates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts that work together to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
+- **Description:** This project automates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts that work together to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
 
 ## Table of Contents
 1. File Descriptions
@@ -9,10 +9,11 @@
 2. [Requirements](#requirements)
 3. [File Structure](#file-structure)
 4. [License](#license)
+5. [Improvements](#improvements)
 
 ## **File Descriptions**
 ### **Data Scraper for DHMI Statistics Page**
--  Description: The main.py script aims to scrape data from the DHMI (State Airports Authority) website, download Excel files, and process the extracted data. It focuses on extracting relevant information such as airport names and corresponding traffic data (domestic, international, and total). The processed data is then structured into a standardized format to facilitate further analysis and reporting.
+-  **Description:** The main.py script aims to scrape data from the DHMI (State Airports Authority) website, download Excel files, and process the extracted data. It focuses on extracting relevant information such as airport names and corresponding traffic data (domestic, international, and total). The processed data is then structured into a standardized format to facilitate further analysis and reporting.
 
 - The [main_scraper.py](https://github.com/melisacar/monthly-scrape/blob/main/main_scraper.py) script performs the following tasks:
     - Disables SSL warnings to allow connections to HTTPS sites without certificate verification.
@@ -39,7 +40,7 @@ python3 main_scraper.py
 ---
 
 ### **Monthly Data Checker**
-- Description: Automates the process of checking for new monthly data from the DHMI (State Airports Authority) website, downloading the latest Excel files, and updating a local Excel file with the new data.
+- **Description:** Automates the process of checking for new monthly data from the DHMI (State Airports Authority) website, downloading the latest Excel files, and updating a local Excel file with the new data.
 
 - The [main_month_checker.py](https://github.com/melisacar/monthly-scrape/blob/main/main_month_checker.py) script performs the following tasks:
     - Disable SSL Warnings: Suppresses SSL verification warnings for secure connections.
@@ -70,7 +71,7 @@ python3 main_month_checker.py
 ---
 
 ### **Monthly Data Scheduler**
-- Description: Automates the retrieval of monthly data from the DHMI (State Airports Authority) website. The script fetches Excel files containing statistics, processes the data, and saves it into a unified Excel file. It runs on a predefined schedule to ensure that data is regularly updated.
+- **Description:** Automates the retrieval of monthly data from the DHMI (State Airports Authority) website. The script fetches Excel files containing statistics, processes the data, and saves it into a unified Excel file. It runs on a predefined schedule to ensure that data is regularly updated.
 
 - The [main_schedule.py](https://github.com/melisacar/monthly-scrape/blob/main/main_schedule.py) script performs the following tasks:
     - Disable SSL Warnings: Suppresses SSL certificate verification warnings for secure connections.
@@ -164,3 +165,6 @@ monthly_scrape/
 
 ### **License**
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/melisacar/monthly-scrape/blob/main/LICENSE.md) file for details.
+
+### **Improvements**
+    - [ ]: New column named "Retrieved at" will be added. 
