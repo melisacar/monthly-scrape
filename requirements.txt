@@ -4,3 +4,4 @@ pytest
 bs4 
 requests
 schedule
+pytz
