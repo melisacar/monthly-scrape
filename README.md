@@ -86,6 +86,22 @@ python3 main_month_checker.py
     - Scheduled Job: Uses the schedule library to run the data retrieval process at specific times on weekdays.
     - End Date Handling: Runs the scheduled job until a specified end date.
 
+#### **Installation**
+1. Clone the Repo
+```bash
+git clone https://github.com/melisacar/monthly-scrape.git
+cd monthly-scrape
+```
+2. Set up the Environment
+- Ensure you have Python installed on your machine. Then install the necessary packages using requirements.txt:
+```bash
+pip3 install -r requirements.txt
+```
+3. Run the Script
+```bash
+python3 main_schedule.py
+```
+---
 ### **Monthly Data Checker (Schedule)**
 - **Description:** Automates the monitoring of the DHMI (State Airports Authority) website for the availability of new monthly data. The script checks the site for new Excel files containing monthly statistics, downloads the latest data if available, and updates a consolidated Excel file. It operates on a schedule to ensure timely updates.
 
@@ -115,23 +131,6 @@ pip3 install -r requirements.txt
 3. Run the Script
 ```bash
 python3 main_mc_schedule.py
-```
----
-
-#### **Installation**
-1. Clone the Repo
-```bash
-git clone https://github.com/melisacar/monthly-scrape.git
-cd monthly-scrape
-```
-2. Set up the Environment
-- Ensure you have Python installed on your machine. Then install the necessary packages using requirements.txt:
-```bash
-pip3 install -r requirements.txt
-```
-3. Run the Script
-```bash
-python3 main_schedule.py
 ```
 ---
 
