@@ -5,7 +5,6 @@ import urllib.parse
 from io import BytesIO
 import ssl
 import urllib3
-#from datetime import datetime
 
 # Map month numbers to names
 months_mapping = {
