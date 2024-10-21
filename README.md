@@ -1,11 +1,12 @@
 # **DHMI Monthly Data Automation Project**
-- **Description:** This project automates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts that work together to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
+- **Description:** This project automates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
 
 ## Table of Contents
 1. File Descriptions
     - [main_scraper.py](#data-scraper-for-dhmi-statistics-page) 
     - [main_month_checker.py](#monthly-data-checker)
     - [main_schedule.py](#monthly-data-scheduler)
+    - [main_mc_schedule.py](#monthly-data-checker-schedule)
 2. [Requirements](#requirements)
 3. [File Structure](#file-structure)
 4. [License](#license)
@@ -40,7 +41,7 @@ python3 main_scraper.py
 ---
 
 ### **Monthly Data Checker**
-- **Description:** Automates the process of checking for new monthly data from the DHMI (State Airports Authority) website, downloading the latest Excel files, and updating a local Excel file with the new data.
+- **Description:** Manually start the process of checking for new monthly data from the DHMI (State Airports Authority) website, downloading the latest Excel files, and updating a local Excel file with the new data.
 
 - The [main_month_checker.py](https://github.com/melisacar/monthly-scrape/blob/main/main_month_checker.py) script performs the following tasks:
     - Disable SSL Warnings: Suppresses SSL verification warnings for secure connections.
@@ -84,6 +85,38 @@ python3 main_month_checker.py
     - Save to Excel: Writes the final DataFrame into an Excel file named DHMI_all.xlsx.
     - Scheduled Job: Uses the schedule library to run the data retrieval process at specific times on weekdays.
     - End Date Handling: Runs the scheduled job until a specified end date.
+
+### **Monthly Data Checker (Schedule)**
+- **Description:** Automates the monitoring of the DHMI (State Airports Authority) website for the availability of new monthly data. The script checks the site for new Excel files containing monthly statistics, downloads the latest data if available, and updates a consolidated Excel file. It operates on a schedule to ensure timely updates.
+
+- The [main_mc_schedule.py](https://github.com/melisacar/monthly-scrape/blob/main/main_mc_schedule.py) script performs the following tasks:
+
+    - Disable SSL Warnings: Suppresses SSL certificate verification warnings for secure connections.
+    - Fetch Page Content: Retrieves the HTML content of the specified DHMI statistics page.
+    - Parse Excel Links: Identifies and extracts the most recent Excel file link available on the page.
+    - Extract Month Numbers: Processes the month information from both the HTML content and Excel files.
+    - Download Excel Files: Downloads the identified Excel file, ignoring SSL verification.
+    - Extract Year and Month: Converts date information to a formatted "YYYY-MM" string.
+    - Transform Excel Data: Reads data from all sheets of the downloaded Excel file, transforms it into a structured format, and adds metadata like category and access date.
+    - Update Data: Merges the new data with existing data in the file DHMI_all.xlsx.
+    - Scheduled Job: Uses the schedule library to run the data check process at specific times on weekdays.
+    - End Date Handling: The scheduled job runs until a specified end date, stopping automatically when the date is reached.
+#### **Installation**
+1. Clone the Repo
+```bash
+git clone https://github.com/melisacar/monthly-scrape.git
+cd monthly-scrape
+```
+2. Set up the Environment
+    - Ensure you have Python installed on your machine. Then install the necessary packages using requirements.txt:
+```bash
+pip3 install -r requirements.txt
+```
+3. Run the Script
+```bash
+python3 main_mc_schedule.py
+```
+---
 
 #### **Installation**
 1. Clone the Repo
