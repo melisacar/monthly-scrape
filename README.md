@@ -186,7 +186,7 @@ monthly_scrape/
 ├── DHMI_all.xlsx              # Output file containing the merged and transformed data.
 ├── LICENSE.md                 # Contains the license information for the project.
 ├── README.md                  # Documentation of the project.
-├── main_mc_schedule.py      # Script to automate scraping available new month data on a schedule.
+├── main_mc_schedule.py        # Script to automate scraping available new month data on a schedule.
 ├── main_month_checker.py      # Script for checking available new month data.
 ├── main_schedule.py           # Script to automate data scraping on a schedule.
 ├── main_scraper.py            # Script for scraping and downloading DHMI Excel files.
