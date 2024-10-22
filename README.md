@@ -1,16 +1,23 @@
-# **DHMI Monthly Data Automation Project**
-- **Description:** This project automates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
+# Automated Data Management for DHMI Flight Information
+## Introduction
+- **Introduction:** This project encompasses two interconnected phases focusing on the automated retrieval and storage of monthly flight data from the DHMI (State Airports Authority) website. In Part 1, the project simplifies the process of collecting, transforming, and consolidating this data into an Excel file. Building upon this foundation, Part 2 implements a systematic approach to storing the data in a PostgreSQL database using Docker and SQLAlchemy, with automation managed through Airflow. This ensures that the data is not only organized but also readily available for ongoing analysis.
+
+
+# **Part 1: Scraping Monthly Flight Data from DHMI**
+- **Description:** Part 1 project facilitates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
 
 ## Table of Contents
-1. File Descriptions
-    - [main_scraper.py](#data-scraper-for-dhmi-statistics-page) 
-    - [main_month_checker.py](#monthly-data-checker)
-    - [main_schedule.py](#monthly-data-scheduler)
-    - [main_mc_schedule.py](#monthly-data-checker-schedule)
-2. [Requirements](#requirements)
-3. [File Structure](#file-structure)
-4. [License](#license)
-5. [Improvements](#improvements)
+1. [Part 1](#part-1-scraping-monthly-flight-data-from-dhmi)
+    1. File Descriptions
+        - [main_scraper.py](#data-scraper-for-dhmi-statistics-page) 
+        - [main_month_checker.py](#monthly-data-checker)
+        - [main_schedule.py](#monthly-data-scheduler)
+        - [main_mc_schedule.py](#monthly-data-checker-schedule)
+    2. [Requirements](#requirements)
+    3. [File Structure](#file-structure)
+    4. [License](#license)
+    5. [Improvements](#improvements)
+2. [Part 2](#part-2-automated-postgresql-storage-for-dhmi-data-using-airflow)
 
 ## **File Descriptions**
 ### **Data Scraper for DHMI Statistics Page**
@@ -201,3 +208,127 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 ### **Improvements**
 - [x] : New column named "Retrieved at" (***Erişim Tarihi***) will be added. 
+
+
+---
+
+
+
+
+
+## Connect to PostgreSQL (SQLAlchemy)
+- Connecting to a PostgreSQL database using a simple structure, creating a table, and performing basic CRUD (Create, Read, Update, Delete) operations.
+
+- Install
+```shell
+pip install sqlalchemy psycopg2
+```
+- Connect
+```py
+from sqlalchemy import create_engine
+# 'postgresql://<kullanıcı_adı>:<şifre>@<host>:<port>/<veritabanı_adı>'
+engine = create_engine('postgresql://your_username:your_password@localhost:5432/your_database_name')
+```
+
+# **Part 2: Automated PostgreSQL Storage for DHMI Data Using Airflow** 
+
+This project is a continuation of the DHMI Scraping Project, focused on storing monthly flight data in a `PostgreSQL` database using `Docker` and `SQLAlchemy`. Part 2 extends the automation from Part 1 by modifying the existing data processing scripts to write the cleaned data into the database. The entire process is automated using `Apache Airflow`, allowing for scheduled data scraping, transformation, and database insertion. The steps below will guide you through the setup, including creating Docker containers for PostgreSQL, **managing migrations** with SQLAlchemy, and inserting sample data into the database.
+
+1. Create `docker_compose.yaml` File
+
+Created to define the PostgreSQL database service with settings like environment variables, volumes, and ports in a single file for easy deployment.
+
+```yaml
+version: "3.9"
+services:
+    database:
+        container_name: "postgres"
+        image: "postgres"
+        ports:
+            - "5432:5432"
+        environment:
+            - "POSTGRES_PASSWORD=secret"
+            - "POSTGRES_DB=dhmi-scrape"
+        volumes:
+            - pg-data:/var/lib/postgresql/data
+
+volumes:
+    pg-data:
+```
+
+2. Start Services Using Docker Compose
+
+Start the database service defined in the docker-compose.yaml file.
+
+```bash
+docker compose down
+```
+
+```bash
+docker-compose up -d
+```
+ - This command reads the `docker-compose.yaml` file, pulls the necessary image, creates the PostgreSQL container, and mounts the volume for data persistence.
+ - `-d` starts the services in the background
+
+ ```bash
+docker ps
+ ```
+ - List running Docker containers.
+
+ 3. Connect to PostgreSQL from Python Using SQLAlchemy
+
+Interact with the PostgreSQL database programmatically using Python.
+```py
+from sqlalchemy import create_engine
+engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
+```
+4. Define the ORM Models and Run Migrations Using migration.py
+
+Using SQLAlchemy’s ORM allows us to define our database tables as Python classes. This makes interacting with the database more intuitive, using Python objects instead of raw SQL queries.
+
+```py
+
+from sqlalchemy import create_engine, Column, Integer, Float, String, CHAR, Date
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import date
+
+Base = declarative_base()
+
+# Define the Flights table.
+class Flight(Base):
+    __tablename__ = 'flights' 
+
+    id = Column(Integer, primary_key=True, autoincrement=True)  
+    airport_name = Column(String)
+    flight_type = Column(String)
+    quantity = Column(Float)
+    category = Column(String)
+    flight_time = Column(CHAR(7))
+    retrieved_at = Column(Date)      
+
+engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
+
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Try with sample data.
+sample_flights = [
+    Flight(airport_name='Istanbul Airport', flight_type='Domestic', quantity=150.5, category='Economy', flight_time='12:30', retrieved_at=date(2024, 6, 1)),
+    Flight(airport_name='Sabiha Gokcen', flight_type='International', quantity=200.0, category='Business', flight_time='14:45', retrieved_at=date(2024, 6, 1)),
+    Flight(airport_name='Ankara Esenboga', flight_type='Domestic', quantity=100.0, category='Economy', flight_time='09:00', retrieved_at=date(2024, 6, 2)),
+]
+
+session.add_all(sample_flights)
+session.commit() 
+
+session.close()
+```
+5. Run the `migration.py` File
+Apply the ORM-defined schema to the PostgreSQL database, creating the necessary tables.
+```bash
+python3 migration.py
+```
+- This command runs the migration.py script, which creates the flights table in the database.
