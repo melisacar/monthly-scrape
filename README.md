@@ -1,10 +1,6 @@
 # Automated Data Management for DHMI Flight Information
 ## Introduction
-- **Introduction:** This project encompasses two interconnected phases focusing on the automated retrieval and storage of monthly flight data from the DHMI (State Airports Authority) website. In Part 1, the project simplifies the process of collecting, transforming, and consolidating this data into an Excel file. Building upon this foundation, Part 2 implements a systematic approach to storing the data in a PostgreSQL database using Docker and SQLAlchemy, with automation managed through Airflow. This ensures that the data is not only organized but also readily available for ongoing analysis.
-
-
-# **Part 1: Scraping Monthly Flight Data from DHMI**
-- **Description:** Part 1 project facilitates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
+- This project encompasses two interconnected phases focusing on the automated retrieval and storage of monthly flight data from the DHMI (State Airports Authority) website. In Part 1, the project simplifies the process of collecting, transforming, and consolidating this data into an Excel file. Building upon this foundation, Part 2 implements a systematic approach to storing the data in a PostgreSQL database using Docker and SQLAlchemy, with automation managed through Airflow. This ensures that the data is not only organized but also readily available for ongoing analysis.
 
 ## Table of Contents
 1. [Part 1](#part-1-scraping-monthly-flight-data-from-dhmi)
@@ -18,6 +14,9 @@
     4. [License](#license)
     5. [Improvements](#improvements)
 2. [Part 2](#part-2-automated-postgresql-storage-for-dhmi-data-using-airflow)
+
+# **Part 1: Scraping Monthly Flight Data from DHMI**
+- **Description:** Part 1 project facilitates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
 
 ## **File Descriptions**
 ### **Data Scraper for DHMI Statistics Page**
@@ -211,25 +210,6 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 
 ---
-
-
-
-
-
-## Connect to PostgreSQL (SQLAlchemy)
-- Connecting to a PostgreSQL database using a simple structure, creating a table, and performing basic CRUD (Create, Read, Update, Delete) operations.
-
-- Install
-```shell
-pip install sqlalchemy psycopg2
-```
-- Connect
-```py
-from sqlalchemy import create_engine
-# 'postgresql://<kullanıcı_adı>:<şifre>@<host>:<port>/<veritabanı_adı>'
-engine = create_engine('postgresql://your_username:your_password@localhost:5432/your_database_name')
-```
-
 # **Part 2: Automated PostgreSQL Storage for DHMI Data Using Airflow** 
 
 This project is a continuation of the DHMI Scraping Project, focused on storing monthly flight data in a `PostgreSQL` database using `Docker` and `SQLAlchemy`. Part 2 extends the automation from Part 1 by modifying the existing data processing scripts to write the cleaned data into the database. The entire process is automated using `Apache Airflow`, allowing for scheduled data scraping, transformation, and database insertion. The steps below will guide you through the setup, including creating Docker containers for PostgreSQL, **managing migrations** with SQLAlchemy, and inserting sample data into the database.
@@ -276,10 +256,15 @@ docker ps
  - List running Docker containers.
 
  3. Connect to PostgreSQL from Python Using SQLAlchemy
-
-Interact with the PostgreSQL database programmatically using Python.
+- Connecting to a PostgreSQL database using a simple structure, creating a table, and performing basic CRUD (Create, Read, Update, Delete) operations.
+- Install
+```shell
+pip3 install sqlalchemy psycopg2-binary
+```
+- Interact with the PostgreSQL database programmatically using Python.
 ```py
 from sqlalchemy import create_engine
+# 'postgresql://<user_name>:<passw>@<host>:<port>/<db_name>'
 engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
 ```
 4. Define the ORM Models and Run Migrations Using migration.py
