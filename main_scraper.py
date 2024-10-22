@@ -73,8 +73,9 @@ def extract_year_month(date_info):
     
     # Convert month text to its corresponding number
     month = month_mapping.get(month_text.upper(), "01")  # Default to "01" if month not found
+    month = month_mapping.get(month_text.upper(), "01")  # Default to "01" if month not found
     
-    return f"{year}-{month}"
+    return f"{year}-{month}-01" # Convert to "YYYY-MM-01" format to store as a DATE (YYYY-MM-DD) type in SQL.
 
 def transform_excel_file(excel_content):
     """

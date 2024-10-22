@@ -120,7 +120,7 @@ def download_excel_file(href):
 def extract_year_month(date_info):
     """
     Extracts the year and month from the given date information string.
-    Converts month name to its numerical value and formats as "YYYY-MM".
+    Converts month name to its numerical value and formats as "YYYY-MM-DD".
     """
     # Map Turkish month names to numerical values
     month_mapping = {
@@ -136,7 +136,7 @@ def extract_year_month(date_info):
     # Convert month text to its corresponding number
     month = month_mapping.get(month_text.upper(), "00")  # Default to "01" if month not found
     
-    return f"{year}-{month}"
+    return f"{year}-{month}-01" # Convert to "YYYY-MM-01" format to store as a DATE (YYYY-MM-DD) type in SQL.
 
 def transform_excel_file(excel_content, access_date):
     """
