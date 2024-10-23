@@ -5,10 +5,13 @@ import urllib.parse
 from io import BytesIO
 import ssl
 import urllib3
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from migration import Flight, Base  # Import Flight class from migration.py
+from migration import Flight, Base, engine
 from datetime import date
+
+# Create a session.
+Session = sessionmaker(bind=engine)
+session = Session()
 
 def disable_ssl_warnings():
     """
@@ -128,26 +131,28 @@ def transform_excel_file(excel_content):
     final_df = pd.DataFrame(final_data, columns=['Havalimanı', 'Hat Türü', 'Num', 'Kategori', 'Tarih']) # Transformed to df to use concat in main() func.
     return final_df
 
-def write_to_postgresql(final_df):
+def save_to_database(df):
     """
-    Writes the DataFrame to a PostgreSQL database.
+    Saves a list of Flight objects to the PostgreSQL database.
     """
-    # Define your PostgreSQL connection details.
-    db_user = 'postgres'
-    db_password = 'secret'
-    db_host = 'localhost'  # Or your database host.
-    db_port = '5432'       # Default PostgreSQL port.
-    db_name = 'dhmi-scrape'
-    
-    # Create a connection string.
-    connection_string = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
-    
-    # Create an SQLAlchemy engine.
-    engine = create_engine(connection_string)
-    
-    # Write DataFrame to PostgreSQL table 'dhmi_data'. Replace 'if_exists' parameter as needed.
-    final_df.to_sql('dhmi_data', engine, if_exists='replace', index=False)
+    flight_objects = []
+        
+    for index, row in df.iterrows():
+            # Debug: Show which row is being processed
+            #print(f"Processing row {index}: {row.to_dict()}")
+        flight = Flight(
+            havalimani=row['Havalimanı'],
+            hat_turu=row['Hat Türü'],
+            num=row['Num'],
+            kategori=row['Kategori'],
+            tarih=row['Tarih']  # Tarih, SQL'de DATE tipi
+            )
+        flight_objects.append(flight)  # Flight nesnesini listeye ekle
+
+    session.add_all(flight_objects)
+    session.commit()
     print("Data has been written to the PostgreSQL database.")
+    session.close()
 
 def main():
     # Disable SSL warnings.
@@ -171,8 +176,8 @@ def main():
         print(f"Processing file from {href}")
         excel_content = download_excel_file(href)
         if excel_content:
-            df = transform_excel_file(excel_content)  # Transform the file.
-            all_data.append(df)  # Append each df to the list.
+            flight_df = transform_excel_file(excel_content)  # Transform the file.
+            all_data.append(flight_df)  # Append each df to the list.
         else:
             print(f"Skipping {href} due to download error.")
     
@@ -180,8 +185,7 @@ def main():
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
         # print(final_df) Control
-        # Save the final DataFrame to the PostgreSQL database.
-        write_to_postgresql(final_df)
+        save_to_database(final_df)
     
 if __name__ == "__main__":
     main()
