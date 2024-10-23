@@ -238,23 +238,41 @@ volumes:
 
 2. Start Services Using Docker Compose
 
-Start the database service defined in the docker-compose.yaml file.
-
+- Start the database service defined in the docker-compose.yaml file.
 ```bash
 docker compose down
 ```
-
+- **Note:** 
+    - The `docker-compose stop` command will stop your containers, but it **won't remove** them. 
+    - The `docker-compose down` command will stop your containers, but it also **removes** the stopped containers as well as any networks that were created. 
+    - You can take down 1 step further and add the `-v` flag to **remove all volumes too**.
 ```bash
 docker-compose up -d
 ```
  - This command reads the `docker-compose.yaml` file, pulls the necessary image, creates the PostgreSQL container, and mounts the volume for data persistence.
  - `-d` starts the services in the background
 
+#### Error Handling
+
+SQL IDE error message `password authentication failed for user "postgres"` while reconnecting to your database (Can have multiple reasons for that, see below for what I faced and how I fixed):
+
+- Identify the Process Using Port number:
+    - This command will show you the process ID (PID) that is using the port. (in my case: 141)
+```bash
+sudo lsof -i :5432
+```
+- You can then stop the process using: 
+```bash
+sudo kill -9 141
+```
+- Restart Docker services
+```bash
+docker compose up -d
+```
+- List and see running Docker containers.
  ```bash
 docker ps
  ```
- - List running Docker containers.
-
  3. Connect to PostgreSQL from Python Using SQLAlchemy
 - Connecting to a PostgreSQL database using a simple structure, creating a table, and performing basic CRUD (Create, Read, Update, Delete) operations.
 - Install
@@ -267,12 +285,11 @@ from sqlalchemy import create_engine
 # 'postgresql://<user_name>:<passw>@<host>:<port>/<db_name>'
 engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
 ```
-4. Define the ORM Models and Run Migrations Using migration.py
+4. Define the ORM Models and Run Migrations Using `migration.py`
 
 Using SQLAlchemy’s ORM allows us to define our database tables as Python classes. This makes interacting with the database more intuitive, using Python objects instead of raw SQL queries.
 
 ```py
-
 from sqlalchemy import create_engine, Column, Integer, Float, String, CHAR, Date
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
