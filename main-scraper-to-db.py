@@ -6,9 +6,7 @@ from io import BytesIO
 import ssl
 import urllib3
 from sqlalchemy.orm import sessionmaker
-from models import Flight
-#from models Base
-#from models engine
+from models import Flight, Base, engine
 from datetime import date, datetime
 
 def disable_ssl_warnings():
@@ -107,7 +105,7 @@ def transform_excel_file(excel_content):
         end_row = dhmi_toplami_index if dhmi_toplami_index else sheet_data.shape[0] - 8
 
         processed_data = sheet_data.iloc[2:end_row, [0, 4, 5, 6]]
-        processed_data.columns = ['havalimani', 'ic_hat', 'dis_hat', 'toplam']
+        processed_data.columns = ['havalimani', 'İç Hat', 'Dış Hat', 'Toplam']
         processed_data['kategori'] = sheet_name # Add sheet names as a new column. 
         processed_data['tarih'] = formatted_date  # Change: Store date object instead of string.
 
@@ -119,19 +117,19 @@ def transform_excel_file(excel_content):
 
     for index, row in merged_all_sheets.iterrows():
         airport = str(row['havalimani'])
-        domestic = float(row['ic_hat']) # Change: Ensure values are converted to float.
-        international = float(row['dis_hat']) # Change: Ensure values are converted to float.
-        total = float(row['toplam']) # Change: Ensure values are converted to float.
+        domestic = float(row['İç Hat']) # Change: Ensure values are converted to float.
+        international = float(row['Dış Hat']) # Change: Ensure values are converted to float.
+        total = float(row['Toplam']) # Change: Ensure values are converted to float.
         category = str(row['kategori'])
         date = row['tarih']
 
-        final_data.append([airport, 'ic_hat', domestic, category, date]) # Append function takes single parameter, thus take as a list.
-        final_data.append([airport, 'dis_hat', international, category, date])
-        final_data.append([airport, 'toplam', total, category, date])
+        final_data.append([airport, 'İç Hat', domestic, category, date]) # Append function takes single parameter, thus take as a list.
+        final_data.append([airport, 'Dış Hat', international, category, date])
+        final_data.append([airport, 'Toplam', total, category, date])
     
 
     final_df = pd.DataFrame(final_data, columns=['havalimani', 'hat_turu', 'num', 'kategori', 'tarih']) # Transformed to df to use concat in main() func.
-    #print(final_df)
+    # print(final_df.head()) Debug.
     return final_df
 
 def save_to_database(df):
@@ -146,6 +144,7 @@ def save_to_database(df):
     for index, row in df.iterrows():
             # Debug: Show which row is being processed
             #print(f"Processing row {index}: {row.to_dict()}")
+        print(f"Before saving to DB: {row['hat_turu']}") # Debug 
         flight = Flight(
             havalimani = str(row['havalimani']),
             hat_turu = str(row['hat_turu']),
@@ -156,7 +155,7 @@ def save_to_database(df):
         flight_objects.append(flight)  # Flight nesnesini listeye ekle
     
     try:
-        session.add_all(flight_objects)
+        session.merge(flight_objects)
         session.commit()
         print("Data has been written to the PostgreSQL database.")
     except Exception as e:
@@ -194,10 +193,11 @@ def main():
     
     # Concatenate all DataFrames into a single DataFrame.
     if all_data:
-        final_df = pd.concat(all_data, ignore_index=True)
-        print(final_df.columns)
-        # print(final_df) Control
-        save_to_database(final_df)
+        output = pd.concat(all_data, ignore_index=True)
+        #print(output.columns) # Debug
+        #print(output.head()) # Debug
+        # print(output) Control
+        save_to_database(output)
     
 if __name__ == "__main__":
     main()
