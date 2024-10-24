@@ -300,6 +300,8 @@ alembic init migrations
 ```
 The project folder structure has a new folder called migrations. This folder will be used by Alembic to manage the migrations revisions and configurations.
 
+To use Alembic we need to config certain files. Open the alembic.ini file and change the sqlalchemy.url property value with the connection string for your database.
+
 
 
 
