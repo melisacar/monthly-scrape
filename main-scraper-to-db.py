@@ -6,12 +6,10 @@ from io import BytesIO
 import ssl
 import urllib3
 from sqlalchemy.orm import sessionmaker
-from migration import Flight, Base, engine
-from datetime import date
-
-# Create a session.
-Session = sessionmaker(bind=engine)
-session = Session()
+from models import Flight
+#from models Base
+#from models engine
+from datetime import date, datetime
 
 def disable_ssl_warnings():
     """
@@ -81,7 +79,12 @@ def extract_year_month(date_info):
     # Convert month text to its corresponding number
     month = month_mapping.get(month_text.upper(), "01")  # Default to "01" if month not found
     
-    return f"{year}-{month}-01" # Convert to "YYYY-MM-01" format to store as a DATE (YYYY-MM-DD) type in SQL.
+    #return f"{year}-{month}-01" # Convert to "YYYY-MM-01" format to store as a DATE (YYYY-MM-DD) type in SQL.
+    # Convert the string to a date object
+    date_str = f"{year}-{month}-01"  # "YYYY-MM-01"
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+
+    return date_obj
 
 def transform_excel_file(excel_content):
     """
@@ -94,7 +97,7 @@ def transform_excel_file(excel_content):
     for sheet_name, sheet_data in sheets_dict.items():
         
         additional_info = sheet_data.iloc[0, 4]  # Select the date cell from the first row.
-        formatted_date = extract_year_month(additional_info)  # Convert to "YYYY-MM" format.
+        formatted_date = extract_year_month(additional_info)
 
         # Find the row number that contains "DHMİ TOPLAMI" phrase.
         dhmi_toplami_index = sheet_data[sheet_data.iloc[:,0].str.contains("DHMİ TOPLAMI", na=False)].index.min() #DHMI TOPLAM ifadesinin geçtiği ilk satırı alır.
@@ -104,10 +107,9 @@ def transform_excel_file(excel_content):
         end_row = dhmi_toplami_index if dhmi_toplami_index else sheet_data.shape[0] - 8
 
         processed_data = sheet_data.iloc[2:end_row, [0, 4, 5, 6]]
-        processed_data.columns = ['Havalimanı', 'İç Hat', 'Dış Hat', 'Toplam']
-        processed_data.fillna(0, inplace=True) 
-        processed_data['Kategori'] = sheet_name # # Add sheet names as a new column. 
-        processed_data['Tarih'] = formatted_date  # Add the formatted date.
+        processed_data.columns = ['havalimani', 'ic_hat', 'dis_hat', 'toplam']
+        processed_data['kategori'] = sheet_name # Add sheet names as a new column. 
+        processed_data['tarih'] = formatted_date  # Change: Store date object instead of string.
 
         all_sheets.append(processed_data) # Append the processed DataFrame to the list.
     
@@ -116,19 +118,20 @@ def transform_excel_file(excel_content):
     final_data = [] # List to store final transformed data.
 
     for index, row in merged_all_sheets.iterrows():
-        airport = row['Havalimanı']
-        domestic = row['İç Hat']
-        international = row['Dış Hat']
-        total = row['Toplam']
-        category = row['Kategori']
-        date = row['Tarih']
+        airport = str(row['havalimani'])
+        domestic = float(row['ic_hat']) # Change: Ensure values are converted to float.
+        international = float(row['dis_hat']) # Change: Ensure values are converted to float.
+        total = float(row['toplam']) # Change: Ensure values are converted to float.
+        category = str(row['kategori'])
+        date = row['tarih']
 
-        final_data.append([airport, 'İç Hat', domestic, category, date]) # Append function takes single parameter, thus take as a list.
-        final_data.append([airport, 'Dış Hat', international, category, date])
-        final_data.append([airport, 'Toplam', total, category, date])
+        final_data.append([airport, 'ic_hat', domestic, category, date]) # Append function takes single parameter, thus take as a list.
+        final_data.append([airport, 'dis_hat', international, category, date])
+        final_data.append([airport, 'toplam', total, category, date])
     
 
-    final_df = pd.DataFrame(final_data, columns=['Havalimanı', 'Hat Türü', 'Num', 'Kategori', 'Tarih']) # Transformed to df to use concat in main() func.
+    final_df = pd.DataFrame(final_data, columns=['havalimani', 'hat_turu', 'num', 'kategori', 'tarih']) # Transformed to df to use concat in main() func.
+    #print(final_df)
     return final_df
 
 def save_to_database(df):
@@ -136,23 +139,31 @@ def save_to_database(df):
     Saves a list of Flight objects to the PostgreSQL database.
     """
     flight_objects = []
-        
+    # Create a session.
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
     for index, row in df.iterrows():
             # Debug: Show which row is being processed
             #print(f"Processing row {index}: {row.to_dict()}")
         flight = Flight(
-            havalimani=row['Havalimanı'],
-            hat_turu=row['Hat Türü'],
-            num=row['Num'],
-            kategori=row['Kategori'],
-            tarih=row['Tarih']  # Tarih, SQL'de DATE tipi
+            havalimani = str(row['havalimani']),
+            hat_turu = str(row['hat_turu']),
+            num = float(row['num']), # Change: Convert 'Num' to float to match database schema.
+            kategori = str(row['kategori']),
+            tarih = row['tarih']  
             )
         flight_objects.append(flight)  # Flight nesnesini listeye ekle
-
-    session.add_all(flight_objects)
-    session.commit()
-    print("Data has been written to the PostgreSQL database.")
-    session.close()
+    
+    try:
+        session.add_all(flight_objects)
+        session.commit()
+        print("Data has been written to the PostgreSQL database.")
+    except Exception as e:
+        session.rollback()  # Rollback in case of error.
+        print(f"An error occurred: {e}")
+    finally:
+        session.close()
 
 def main():
     # Disable SSL warnings.
@@ -184,6 +195,7 @@ def main():
     # Concatenate all DataFrames into a single DataFrame.
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
+        print(final_df.columns)
         # print(final_df) Control
         save_to_database(final_df)
     
