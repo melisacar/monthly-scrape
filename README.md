@@ -11,13 +11,13 @@
 This project automates the process of scraping monthly data from the DHMI (State Airports Authority) website. It downloads Excel files containing monthly statistics, processes the data, and stores it in a PostgreSQL database. The script checks for new monthly data and updates the database accordingly.
 
 ## **Project Overview**
-    - **Features:**
-        1. Uses `requests` and `BeautifulSoup` to scrape and parse the DHMI statistics [page](https://www.dhmi.gov.tr/Sayfalar/Istatistikler.aspx).
-        2. Downloads Excel files, reads and processes the data using `pandas`.
-        3. Uses `SQLAlchemy` for database interactions, saving processed data into a `PostgreSQL` database.
-        4. Handles SSL warnings for secure HTTPS connections.
-        5. Automates the data-checking process and updates the database when **new data is available**.
-        6. Uses `Docker` for a consistent development environment, making it easy to run the PostgreSQL database and other dependencies.
+**Features:**
+    1. Uses `requests` and `BeautifulSoup` to scrape and parse the DHMI statistics [page](https://www.dhmi.gov.tr/Sayfalar/Istatistikler.aspx).
+    2. Downloads Excel files, reads and processes the data using `pandas`.
+    3. Uses `SQLAlchemy` for database interactions, saving processed data into a `PostgreSQL` database.
+    4. Handles SSL warnings for secure HTTPS connections.
+    5. Automates the data-checking process and updates the database when **new data is available**.
+    6. Uses `Docker` for a consistent development environment, making it easy to run the PostgreSQL database and other dependencies.
 ---
 ## File Structure
 ```shell
@@ -100,8 +100,8 @@ volumes:
 
 - Start the database service defined in the docker-compose.yaml file.
 ```bash
-docker compose down
-# # Be careful with this command as it stops and removes containers.  
+# Be careful with this command as it stops and removes containers.
+docker compose down  
 ```
 - **Note:** 
     - The `docker-compose stop` command will stop your containers, but it **won't remove** them. 
@@ -141,10 +141,6 @@ class Flight_Check(Base):
     __tablename__ = 'flight_check'
     # Columns: id, havalimani, hat_turu, num, kategori, tarih, erisim_tarihi
 ```
----
-Briefly, this project focused on storing monthly flight data in a `PostgreSQL` database using `Docker` and `SQLAlchemy`. Extends the automation from build-files/ by modifying the existing data processing scripts to write the cleaned data into the database. The entire process is automated using `Apache Airflow`, allowing for scheduled data scraping, transformation, and database insertion. The steps below will guide you through the setup, including creating Docker containers for PostgreSQL, **managing migrations** with SQLAlchemy, and inserting sample data into the database.
----
-
 ## **License**
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/melisacar/monthly-scrape/blob/main/LICENSE) file for details.
 
