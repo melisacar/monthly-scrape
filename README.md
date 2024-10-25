@@ -49,30 +49,29 @@ cd monthly-scrape
 - Python 3.6+
 - PostgreSQL database
 
-2. Start Services Using Docker Compose:
-- Start the database service defined in the `docker-compose.yaml` file.
+2. **Start Services Using Docker Compose:**
+- This project is Dockerized for easy deployment. Start the database service defined in the `docker-compose.yaml` file.
 ```bash
 docker-compose up -d
 ```
-This project is Dockerized for easy deployment. 
-
  - This command reads the `docker-compose.yaml` file, pulls the necessary image, creates the PostgreSQL container, and mounts the volume for data persistence.
  - `-d` starts the services in the background
 
-3. Prepare the database:
+3. **Prepare the database:**
 - Ensure that PostgreSQL is running in the Docker container. The database will be created automatically using the settings defined in the `docker-compose.yaml` file.
 - You do not need to manually create a database named `dhmi-scrape` as it is handled by the Docker setup.
 
-4. Install required Python packages:
+4. **Install required Python packages:**
 ```shell
 pip3 install -r requirements.txt
 ```
-5. Environment Variables:
-The `.env`(inside the `migrations/`) file is used to configure environment variables required by the project:
+5. **Environment Variables:**
+- The `.env`(inside the `migrations/`) file is used to configure environment variables required by the project:
 ```bash
 DATABASE_URL: PostgreSQL connection string.
 ```
-Ensure that your `.env` file is correctly set up before running the scraper or Docker commands.
+- Ensure that your `.env` file is correctly set up before running the scraper or Docker commands.
+
 ---
 
 ## Usage
