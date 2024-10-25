@@ -71,32 +71,10 @@ DATABASE_URL: PostgreSQL connection string.
 ```
 Ensure that your `.env` file is correctly set up before running the scraper or Docker commands.
 
-## Docker Setup
+## Docker
 This project is Dockerized for easy deployment. 
 
-1. Create `docker_compose.yaml` File
-
-Created to define the PostgreSQL database service with settings like environment variables, volumes, and ports in a single file for easy deployment.
-
-```yaml
-version: "3.9"
-services:
-    database:
-        container_name: "postgres"
-        image: "postgres"
-        ports:
-            - "5432:5432"
-        environment:
-            - "POSTGRES_PASSWORD=secret"
-            - "POSTGRES_DB=dhmi-scrape"
-        volumes:
-            - pg-data:/var/lib/postgresql/data
-
-volumes:
-    pg-data:
-```
-
-2. Start Services Using Docker Compose
+1. Start Services Using Docker Compose
 
 - Start the database service defined in the docker-compose.yaml file.
 ```bash
@@ -113,7 +91,7 @@ docker-compose up -d
  - This command reads the `docker-compose.yaml` file, pulls the necessary image, creates the PostgreSQL container, and mounts the volume for data persistence.
  - `-d` starts the services in the background
 
-#### Error Handling
+2. Error Handling
 
 SQL IDE error message `password authentication failed for user "postgres"` while reconnecting to your database (Can have multiple reasons for that, see below for what I faced and how I fixed):
 
@@ -147,3 +125,26 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 ## Improvement
 
 The data-checking process will be automated using `Apache Airflow`, which will run the scraping script every weekday at a specified time. This enhancement ensures that the database is consistently updated with the latest data **without manual intervention**, making the project more efficient and reliable.
+
+# Extra Notes
+- Create `docker_compose.yaml` File
+
+Created to define the PostgreSQL database service with settings like environment variables, volumes, and ports in a single file for easy deployment.
+
+```yaml
+version: "3.9"
+services:
+    database:
+        container_name: "postgres"
+        image: "postgres"
+        ports:
+            - "5432:5432"
+        environment:
+            - "POSTGRES_PASSWORD=secret"
+            - "POSTGRES_DB=dhmi-scrape"
+        volumes:
+            - pg-data:/var/lib/postgresql/data
+
+volumes:
+    pg-data:
+```
