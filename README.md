@@ -74,6 +74,7 @@ DATABASE_URL: PostgreSQL connection string.
 ```
 Ensure that your `.env` file is correctly set up before running the scraper or Docker commands.
 ---
+
 ## Usage
 - To start the scraping process, run the main script:
 
