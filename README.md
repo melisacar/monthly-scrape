@@ -11,7 +11,7 @@
 This project automates the process of scraping monthly data from the DHMI (State Airports Authority) website. It downloads Excel files containing monthly statistics, processes the data, and stores it in a PostgreSQL database. The script checks for new monthly data and updates the database accordingly.
 
 ## **Project Overview**
-**Features:**
+- Features:
     1. Uses `requests` and `BeautifulSoup` to scrape and parse the DHMI statistics [page](https://www.dhmi.gov.tr/Sayfalar/Istatistikler.aspx).
     2. Downloads Excel files, reads and processes the data using `pandas`.
     3. Uses `SQLAlchemy` for database interactions, saving processed data into a `PostgreSQL` database.
