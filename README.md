@@ -119,9 +119,9 @@ volumes:
     pg-data:
 ```
 
-- Error Handling
+- **Error Handling**
 
-SQL IDE error message `password authentication failed for user "postgres"` while reconnecting to your database (Can have multiple reasons for that, see below for what I faced and how I fixed):
+SQL IDE error message `password authentication failed for user "postgres"` while reconnecting to your database (Can have multiple reasons for that, see below for a temporary solution):
 
 - Identify the Process Using Port number:
     - This command will **show** you the process ID (PID) that is using the port. (in my case: 141)
@@ -140,7 +140,7 @@ docker compose up -d
  ```bash
 docker ps
  ```
-- Common Commands:
- - The `docker-compose stop` command will stop your containers, but it **won't remove** them. 
- - The `docker-compose down` command will stop your containers, but it also **removes** the stopped containers as well as any networks that were created. 
- - You can take down 1 step further and add the `-v` flag to **remove all volumes too**.
+- **Common Commands:**
+    - The `docker-compose stop` command will stop your containers, but it **won't remove** them. 
+    - The `docker-compose down` command will stop your containers, but it also **removes** the stopped containers as well as any networks that were created. 
+    - You can take down 1 step further and add the `-v` flag to **remove all volumes too**.
