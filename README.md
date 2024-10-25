@@ -1,218 +1,78 @@
-# Automated Data Management for DHMI Flight Information
-## Introduction
-- This project encompasses two interconnected phases focusing on the automated retrieval and storage of monthly flight data from the DHMI (State Airports Authority) website. In Part 1, the project simplifies the process of collecting, transforming, and consolidating this data into an Excel file. Building upon this foundation, Part 2 implements a systematic approach to storing the data in a PostgreSQL database using Docker and SQLAlchemy, with automation managed through Airflow. This ensures that the data is not only organized but also readily available for ongoing analysis.
-
+# **DHMI Monthly Data Scraper**
+---
 ## Table of Contents
-1. [Part 1](#part-1-scraping-monthly-flight-data-from-dhmi)
-    1. File Descriptions
-        - [main_scraper.py](#data-scraper-for-dhmi-statistics-page) 
-        - [main_month_checker.py](#monthly-data-checker)
-        - [main_schedule.py](#monthly-data-scheduler)
-        - [main_mc_schedule.py](#monthly-data-checker-schedule)
-    2. [Requirements](#requirements)
-    3. [File Structure](#file-structure)
-    4. [License](#license)
-    5. [Improvements](#improvements)
-2. [Part 2](#part-2-automated-postgresql-storage-for-dhmi-data-using-airflow)
-
-# **Part 1: Scraping Monthly Flight Data from DHMI**
-- **Description:** Part 1 project facilitates the retrieval and processing of monthly data from the DHMI (State Airports Authority) website. It consists of multiple scripts to scrape data, transform it, and save it into a consolidated Excel file. The project runs on a predefined schedule to ensure that data is regularly updated and accessible for analysis.
-
-## **File Descriptions**
-### **Data Scraper for DHMI Statistics Page**
--  **Description:** The main.py script aims to scrape data from the DHMI (State Airports Authority) website, download Excel files, and process the extracted data. It focuses on extracting relevant information such as airport names and corresponding traffic data (domestic, international, and total). The processed data is then structured into a standardized format to facilitate further analysis and reporting.
-
-- The [main_scraper.py](https://github.com/melisacar/monthly-scrape/blob/main/main_scraper.py) script performs the following tasks:
-    - Disables SSL warnings to allow connections to HTTPS sites without certificate verification.
-    - Fetches the content of the DHMI statistics page.
-    - Parses the HTML to extract links to Excel files.
-    - Downloads and processes each Excel file, transforming the data into a structured format.
-    - Saves the combined data into a single Excel file named `DHMI_all.xlsx`.
-
-#### **Installation**
-1. Clone the Repo
-```bash
-git clone https://github.com/melisacar/monthly-scrape.git
-cd monthly-scrape
-```
-2. Set up the Environment
-    - Ensure you have Python installed on your machine. Then install the necessary packages using requirements.txt:
-```bash
-pip3 install -r requirements.txt
-```
-3. Run the Script
-```bash
-python3 main_scraper.py
-```
+1. [DHMI Monthly Data Scraper](#project-overview)
+    1. [File Structure](#file-structure)
+    2. [Setup, Installation and Usage](#setup-and-installation)
+    3. [License](#license)
+    4. [Improvements](#improvements)
 ---
+## **Introduction**
+This project automates the process of scraping monthly data from the DHMI (State Airports Authority) website. It downloads Excel files containing monthly statistics, processes the data, and stores it in a PostgreSQL database. The script checks for new monthly data and updates the database accordingly.
 
-### **Monthly Data Checker**
-- **Description:** Manually start the process of checking for new monthly data from the DHMI (State Airports Authority) website, downloading the latest Excel files, and updating a local Excel file with the new data.
-
-- The [main_month_checker.py](https://github.com/melisacar/monthly-scrape/blob/main/main_month_checker.py) script performs the following tasks:
-    - Disable SSL Warnings: Suppresses SSL verification warnings for secure connections.
-    - Fetch Page Content: Retrieves the HTML content of the specified DHMI statistics page.
-    - Parse Excel Links: Identifies and extracts the link to the most recent Excel file available on the page.
-    - Extract Month Number: Converts month names (e.g., "TEMMUZ SONU") to their corresponding numerical values for comparison.
-    - Get Latest Month from Excel: Reads the existing DHMI_all.xlsx file to determine the latest month of data.
-    - Find Newest Month in HTML: Analyzes the page content to find the most recent month available in the HTML.
-    - Download Excel File: Downloads the latest Excel file if new data is detected.
-    - Transform Excel File: Processes the downloaded Excel file, extracts relevant data, and formats it for consistent usage.
-    - Update Local File: Merges the newly acquired data with the existing data in DHMI_all.xlsx and saves the updated file.
-
-#### **Installation**
-1. Clone the Repo
-```bash
-git clone https://github.com/melisacar/monthly-scrape.git
-cd monthly-scrape
-```
-2. Set up the Environment
-    - Ensure you have Python installed on your machine. Then install the necessary packages using requirements.txt:
-```bash
-pip3 install -r requirements.txt
-```
-3. Run the Script
-```bash
-python3 main_month_checker.py
-```
+## **Project Overview**
+    - **Features:**
+        1. Uses `requests` and `BeautifulSoup` to scrape and parse the DHMI statistics [page](https://www.dhmi.gov.tr/Sayfalar/Istatistikler.aspx).
+        2. Downloads Excel files, reads and processes the data using `pandas`.
+        3. Uses `SQLAlchemy` for database interactions, saving processed data into a `PostgreSQL` database.
+        4. Handles SSL warnings for secure HTTPS connections.
+        5. Automates the data-checking process and updates the database when **new data is available**.
+        6. Uses `Docker` for a consistent development environment, making it easy to run the PostgreSQL database and other dependencies.
 ---
-
-### **Monthly Data Scheduler**
-- **Description:** Automates the retrieval of monthly data from the DHMI (State Airports Authority) website. The script fetches Excel files containing statistics, processes the data, and saves it into a unified Excel file. It runs on a predefined schedule to ensure that data is regularly updated.
-
-- The [main_schedule.py](https://github.com/melisacar/monthly-scrape/blob/main/main_schedule.py) script performs the following tasks:
-    - Disable SSL Warnings: Suppresses SSL certificate verification warnings for secure connections.
-    - Fetch Page Content: Retrieves the HTML content of the specified DHMI statistics page.
-    - Parse Excel Links: Identifies and extracts links to Excel files available on the page.
-    - Download Excel Files: Downloads each identified Excel file.
-    - Extract Year and Month: Processes date information from the Excel files to format it correctly.
-    - Transform Excel Data: Reads and transforms the data from the Excel files into a structured format.
-    - Concatenate Data: Merges data from all downloaded Excel files into a single DataFrame.
-    - Save to Excel: Writes the final DataFrame into an Excel file named DHMI_all.xlsx.
-    - Scheduled Job: Uses the schedule library to run the data retrieval process at specific times on weekdays.
-    - End Date Handling: Runs the scheduled job until a specified end date.
-
-#### **Installation**
-1. Clone the Repo
-```bash
-git clone https://github.com/melisacar/monthly-scrape.git
-cd monthly-scrape
-```
-2. Set up the Environment
-- Ensure you have Python installed on your machine. Then install the necessary packages using requirements.txt:
-```bash
-pip3 install -r requirements.txt
-```
-3. Run the Script
-```bash
-python3 main_schedule.py
-```
----
-### **Monthly Data Checker (Schedule)**
-- **Description:** Automates the monitoring of the DHMI (State Airports Authority) website for the availability of new monthly data. The script checks the site for new Excel files containing monthly statistics, downloads the latest data if available, and updates a consolidated Excel file. It operates on a schedule to ensure timely updates.
-
-- The [main_mc_schedule.py](https://github.com/melisacar/monthly-scrape/blob/main/main_mc_schedule.py) script performs the following tasks:
-
-    - Disable SSL Warnings: Suppresses SSL certificate verification warnings for secure connections.
-    - Fetch Page Content: Retrieves the HTML content of the specified DHMI statistics page.
-    - Parse Excel Links: Identifies and extracts the most recent Excel file link available on the page.
-    - Extract Month Numbers: Processes the month information from both the HTML content and Excel files.
-    - Download Excel Files: Downloads the identified Excel file, ignoring SSL verification.
-    - Extract Year and Month: Converts date information to a formatted "YYYY-MM" string.
-    - Transform Excel Data: Reads data from all sheets of the downloaded Excel file, transforms it into a structured format, and adds metadata like category and access date.
-    - Update Data: Merges the new data with existing data in the file DHMI_all.xlsx.
-    - Scheduled Job: Uses the schedule library to run the data check process at specific times on weekdays.
-    - End Date Handling: The scheduled job runs until a specified end date, stopping automatically when the date is reached.
-#### **Installation**
-1. Clone the Repo
-```bash
-git clone https://github.com/melisacar/monthly-scrape.git
-cd monthly-scrape
-```
-2. Set up the Environment
-    - Ensure you have Python installed on your machine. Then install the necessary packages using requirements.txt:
-```bash
-pip3 install -r requirements.txt
-```
-3. Run the Script
-```bash
-python3 main_mc_schedule.py
-```
----
-
-### **Requirements**
-- Python 3.x
-- Required Python packages are listed in [`requirements.txt`](https://github.com/melisacar/monthly-scrape/blob/main/requirements.txt), including:
-    - pandas 
-    - openpyxl 
-    - pytest
-    - bs4 
-    - requests
-    - schedule
-
-#### Error Handling
-When trying to install a Python package globally using pip on macOS, the system may not allow the installation. To handle this, you can try the following method:
-
-##### Using a Virtual Environment
-You can resolve this issue by creating a virtual environment. A virtual environment provides an isolated Python installation and allows you to work without affecting global packages.
-
-1. Navigate to the Project Directory: Go to the directory where your project is located:
-```bash
-cd /path/to/your/repo
-```
-2. Create a Virtual Environment:
-```bash
-python3 -m venv venv
-```
-3. Activate the Virtual Environment (for Mac/Linux):
-```bash
-source venv/bin/activate
-```
-4. Upgrade pip:
-```bash
-pip3 install --upgrade pip
-```
-5. Install Libraries from requirements.txt:
-```bash
-pip3 install -r requirements.txt
-```
-### **File Structure**
-```bash
-monthly_scrape/
-|
-├── build-files/               # Directory for storing old or deprecated Python scripts.
+## File Structure
+```shell
+monthly-scrape/
+├── build_files/
 │   ├── clean_format.py
-|   └── ...                    
-├── venv/                      # Virtual environment directory for managing dependencies.
-│   ├── bin/                   # Executables and scripts for the virtual environment.
-│   ├── lib/                   # Python libraries installed in the virtual environment.
-│   └── ...                    # Other virtual environment files.
-├── .DS_Store                  # macOS system file (can be ignored).
-├── .gitignore                 # Specifies files and directories to be ignored by Git.
-├── DHMI_all.xlsx              # Output file containing the merged and transformed data.
-├── LICENSE.md                 # Contains the license information for the project.
-├── README.md                  # Documentation of the project.
-├── main_mc_schedule.py        # Script to automate scraping available new month data on a schedule.
-├── main_month_checker.py      # Script for checking available new month data.
-├── main_schedule.py           # Script to automate data scraping on a schedule.
-├── main_scraper.py            # Script for scraping and downloading DHMI Excel files.
-├── main_scraper_test.py       # Script for testing main_scraper.py
-├── requirements.txt           # List of Python libraries required for the project.
-├── ~$DHMI_all.xlsx            # Temporary Excel file (generated by Excel during editing).
+|   └── ... 
+├── migrations/ # Contains Alembic files for managing database migrations.
+|   └── .env # Stores environment variables for the project.
+|   └── ... 
+├── .gitignore
+├── LICENSE
+├── README.md
+├── alembic.ini # Configuration file for Alembic.
+├── docker-compose.yaml # Configuration for Docker Compose.
+├── main-scraper-db.py # Main script for scraping and processing data.
+├── models.py # Defines the SQLAlchemy models for database tables.
+├── requirements.txt # Lists Python package dependencies.
+ ```
+---
+## Setup and Installation
+1. **Clone the Repo**
+```bash
+git clone https://github.com/melisacar/monthly-scrape.git
+cd monthly-scrape
 ```
+**Prerequisites**
+- Docker & Docker Compose
+- Python 3.6+
+- PostgreSQL database
+
+2. Install required Python packages:
+```shell
+pip3 install -r requirements.txt
+```
+3. Prepare the database:
+- Ensure that PostgreSQL is running, and create a database named dhmi-scrape.
 ---
+## Usage
+- To start the scraping process, run the main script (scrapes if there are new month data added to the given url):
 
-### **License**
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/melisacar/monthly-scrape/blob/main/LICENSE.md) file for details.
+```shell
+python3 main-scraper-db.py
+```
+The script will check for new data, download the latest Excel file if new data is available, processes it, and save it to the database.
 
-### **Improvements**
-- [x] : New column named "Retrieved at" (***Erişim Tarihi***) will be added. 
+## Environment Variables
+The `.env`(inside the `migrations/`) file is used to configure environment variables required by the project:
+```bash
+DATABASE_URL: PostgreSQL connection string.
+```
+Ensure that your `.env` file is correctly set up before running the scraper or Docker commands.
 
-
----
-# **Part 2: Automated PostgreSQL Storage for DHMI Data Using Airflow** 
-
-This project is a continuation of the DHMI Scraping Project, focused on storing monthly flight data in a `PostgreSQL` database using `Docker` and `SQLAlchemy`. Part 2 extends the automation from Part 1 by modifying the existing data processing scripts to write the cleaned data into the database. The entire process is automated using `Apache Airflow`, allowing for scheduled data scraping, transformation, and database insertion. The steps below will guide you through the setup, including creating Docker containers for PostgreSQL, **managing migrations** with SQLAlchemy, and inserting sample data into the database.
+## Docker Setup
+This project is Dockerized for easy deployment. 
 
 1. Create `docker_compose.yaml` File
 
@@ -240,7 +100,8 @@ volumes:
 
 - Start the database service defined in the docker-compose.yaml file.
 ```bash
-docker compose down     
+docker compose down
+# # Be careful with this command as it stops and removes containers.  
 ```
 - **Note:** 
     - The `docker-compose stop` command will stop your containers, but it **won't remove** them. 
@@ -257,7 +118,7 @@ docker-compose up -d
 SQL IDE error message `password authentication failed for user "postgres"` while reconnecting to your database (Can have multiple reasons for that, see below for what I faced and how I fixed):
 
 - Identify the Process Using Port number:
-    - This command will show you the process ID (PID) that is using the port. (in my case: 141)
+    - This command will **show** you the process ID (PID) that is using the port. (in my case: 141)
 ```bash
 sudo lsof -i :5432
 ```
@@ -273,42 +134,20 @@ docker compose up -d
  ```bash
 docker ps
  ```
- 3. Connect to PostgreSQL from Python Using SQLAlchemy
-- Connecting to a PostgreSQL database using a simple structure, creating a table, and performing basic CRUD (Create, Read, Update, Delete) operations.
-- Install
-```shell
-pip3 install sqlalchemy psycopg2-binary
-```
-- Interact with the PostgreSQL database programmatically using Python.
+## SQLAlchemy Model
+Defined in `models.py`:
 ```py
-from sqlalchemy import create_engine
-# 'postgresql://<user_name>:<passw>@<host>:<port>/<db_name>'
-engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
+class Flight_Check(Base):
+    __tablename__ = 'flight_check'
+    # Columns: id, havalimani, hat_turu, num, kategori, tarih, erisim_tarihi
 ```
-4. Define the ORM Models and Run Migrations Using `migration.py`
+---
+Briefly, this project focused on storing monthly flight data in a `PostgreSQL` database using `Docker` and `SQLAlchemy`. Extends the automation from build-files/ by modifying the existing data processing scripts to write the cleaned data into the database. The entire process is automated using `Apache Airflow`, allowing for scheduled data scraping, transformation, and database insertion. The steps below will guide you through the setup, including creating Docker containers for PostgreSQL, **managing migrations** with SQLAlchemy, and inserting sample data into the database.
+---
 
-Using SQLAlchemy’s ORM allows us to define our database tables as Python classes. This makes interacting with the database more intuitive, using Python objects instead of raw SQL queries.
+## **License**
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/melisacar/monthly-scrape/blob/main/LICENSE) file for details.
 
-- Install Alembic
-```shell
-pip install alembic
-```
+## Improvement
 
-Alembic needs a few files to work. To initialize Alembic to your project, type the command bellow:
-```shell
-alembic init migrations
-```
-The project folder structure has a new folder called migrations. This folder will be used by Alembic to manage the migrations revisions and configurations.
-
-To use Alembic we need to config certain files. Open the alembic.ini file and change the sqlalchemy.url property value with the connection string for your database.
-
-
-
-
-
-5. Run the `migration.py` File
-Apply the ORM-defined schema to the PostgreSQL database, creating the necessary tables.
-```bash
-python3 migration.py
-```
-- This command runs the migration.py script, which creates the flights table in the database.
+The data-checking process will be automated using `Apache Airflow`, which will run the scraping script every weekday at a specified time. This enhancement ensures that the database is consistently updated with the latest data **without manual intervention**, making the project more efficient and reliable.
