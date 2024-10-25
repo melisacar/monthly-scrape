@@ -49,69 +49,39 @@ cd monthly-scrape
 - Python 3.6+
 - PostgreSQL database
 
-2. Install required Python packages:
+2. Start Services Using Docker Compose:
+- Start the database service defined in the `docker-compose.yaml` file.
+```bash
+docker-compose up -d
+```
+This project is Dockerized for easy deployment. 
+
+ - This command reads the `docker-compose.yaml` file, pulls the necessary image, creates the PostgreSQL container, and mounts the volume for data persistence.
+ - `-d` starts the services in the background
+
+3. Prepare the database:
+- Ensure that PostgreSQL is running in the Docker container. The database will be created automatically using the settings defined in the `docker-compose.yaml` file.
+- You do not need to manually create a database named `dhmi-scrape` as it is handled by the Docker setup.
+
+4. Install required Python packages:
 ```shell
 pip3 install -r requirements.txt
 ```
-3. Prepare the database:
-- Ensure that PostgreSQL is running, and create a database named dhmi-scrape.
+5. Environment Variables:
+The `.env`(inside the `migrations/`) file is used to configure environment variables required by the project:
+```bash
+DATABASE_URL: PostgreSQL connection string.
+```
+Ensure that your `.env` file is correctly set up before running the scraper or Docker commands.
 ---
 ## Usage
-- To start the scraping process, run the main script (scrapes if there are new month data added to the given url):
+- To start the scraping process, run the main script:
 
 ```shell
 python3 main-scraper-db.py
 ```
 The script will check for new data, download the latest Excel file if new data is available, processes it, and save it to the database.
 
-## Environment Variables
-The `.env`(inside the `migrations/`) file is used to configure environment variables required by the project:
-```bash
-DATABASE_URL: PostgreSQL connection string.
-```
-Ensure that your `.env` file is correctly set up before running the scraper or Docker commands.
-
-## Docker
-This project is Dockerized for easy deployment. 
-
-1. Start Services Using Docker Compose
-
-- Start the database service defined in the docker-compose.yaml file.
-```bash
-# Be careful with this command as it stops and removes containers.
-docker compose down  
-```
-- **Note:** 
-    - The `docker-compose stop` command will stop your containers, but it **won't remove** them. 
-    - The `docker-compose down` command will stop your containers, but it also **removes** the stopped containers as well as any networks that were created. 
-    - You can take down 1 step further and add the `-v` flag to **remove all volumes too**.
-```bash
-docker-compose up -d
-```
- - This command reads the `docker-compose.yaml` file, pulls the necessary image, creates the PostgreSQL container, and mounts the volume for data persistence.
- - `-d` starts the services in the background
-
-2. Error Handling
-
-SQL IDE error message `password authentication failed for user "postgres"` while reconnecting to your database (Can have multiple reasons for that, see below for what I faced and how I fixed):
-
-- Identify the Process Using Port number:
-    - This command will **show** you the process ID (PID) that is using the port. (in my case: 141)
-```bash
-sudo lsof -i :5432
-```
-- You can then stop the process using: 
-```bash
-sudo kill -9 141
-```
-- Restart Docker services
-```bash
-docker compose up -d
-```
-- List and see running Docker containers.
- ```bash
-docker ps
- ```
 ## SQLAlchemy Model
 Defined in `models.py`:
 ```py
@@ -148,3 +118,29 @@ services:
 volumes:
     pg-data:
 ```
+
+- Error Handling
+
+SQL IDE error message `password authentication failed for user "postgres"` while reconnecting to your database (Can have multiple reasons for that, see below for what I faced and how I fixed):
+
+- Identify the Process Using Port number:
+    - This command will **show** you the process ID (PID) that is using the port. (in my case: 141)
+```bash
+sudo lsof -i :5432
+```
+- You can then stop the process using: 
+```bash
+sudo kill -9 141
+```
+- Restart Docker services
+```bash
+docker compose up -d
+```
+- List and see running Docker containers.
+ ```bash
+docker ps
+ ```
+- Common Commands:
+ - The `docker-compose stop` command will stop your containers, but it **won't remove** them. 
+ - The `docker-compose down` command will stop your containers, but it also **removes** the stopped containers as well as any networks that were created. 
+ - You can take down 1 step further and add the `-v` flag to **remove all volumes too**.
