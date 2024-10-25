@@ -5,17 +5,6 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 Base = declarative_base()
 
-# Define the Flights table.
-class Flight(Base):
-    __tablename__ = 'flights' 
-
-    id=Column(Integer, primary_key=True, autoincrement=True)  
-    havalimani=Column(String, nullable=True)
-    hat_turu=Column(String, nullable=True)
-    num=Column(Float, nullable=True)
-    kategori=Column(String, nullable=True)
-    tarih=Column(Date, nullable=True)
-
 # Define the Flights Check table.
 class Flight_Check(Base):
     __tablename__ = 'flight_check' 
