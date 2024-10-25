@@ -155,7 +155,7 @@ def save_to_database(df):
         flight_objects.append(flight)  # Flight nesnesini listeye ekle
     
     try:
-        session.merge(flight_objects)
+        session.add(flight_objects)
         session.commit()
         print("Data has been written to the PostgreSQL database.")
     except Exception as e:
