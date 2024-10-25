@@ -15,7 +15,18 @@ class Flight(Base):
     num=Column(Float, nullable=True)
     kategori=Column(String, nullable=True)
     tarih=Column(Date, nullable=True)
-    #retrieved_at = Column(Date, nullable=True) 
+
+# Define the Flights Check table.
+class Flight_Check(Base):
+    __tablename__ = 'flight_check' 
+    
+    id=Column(Integer, primary_key=True, autoincrement=True)  
+    havalimani=Column(String, nullable=True)
+    hat_turu=Column(String, nullable=True)
+    num=Column(Float, nullable=True)
+    kategori=Column(String, nullable=True)
+    tarih=Column(Date, nullable=True)
+    erisim_tarihi = Column(Date, nullable=True) 
 
 # Database connection.
 engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
