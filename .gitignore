@@ -3,3 +3,91 @@
 
 # Ignore Excel temporary files
 ~$*
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.venv/
+env/
+ENV/
+venv.bak/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python packages
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+wheels/
+*.whl
+
+# C extensions
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# Pytest
+.cache/
+*.pytest_cache
+
+# Coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+*.cover
+*.coverage.*
+.cache
+
+# Bandit security analysis
+bandit.yaml
+
+# Airflow
+airflow.db
+airflow.cfg
+logs/
+dags/__pycache__/
+
+# Local databases
+*.sqlite3
+*.db
+
+# Ignore files related to editor configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables (secret files)
+.env
+*.env
+
+# Jupyter Notebook metadata
+.ipynb_checkpoints/
+__pycache__/
