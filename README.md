@@ -19,7 +19,7 @@ This project automates the following tasks:
 
 ## Project Structure
 The main components of this project are organized into directories and files as follows:
-
+```bash
 ├── dags
 │   └── data_pipeline_dag.py    # Defines the DAG for Apache Airflow to schedule and run the data pipeline
 ├── src
@@ -32,7 +32,7 @@ The main components of this project are organized into directories and files as 
 ├── README.md                   # Project documentation
 ├── docker-compose.yaml         # Docker Compose setup for Airflow, PostgreSQL, and the app
 └── requirements.txt            # Python dependencies
-
+```
 
 
 Here's a comprehensive README file for your project in English, with sections covering the setup, project structure, DAG flow, and database integration. This README assumes that your audience has some familiarity with Docker, Apache Airflow, and Python.
