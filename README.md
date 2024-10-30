@@ -1,5 +1,6 @@
 # DHMI Monthly Data Pipeline
 A data pipeline to **automate** the **scraping and transformation** of monthly airport traffic data from the DHMI (State Airports Authority) website. This project uses **Apache Airflow** to **schedule** the pipeline, fetches data with `requests` and `BeautifulSoup`, and stores transformed data in a PostgreSQL database.
+---
 
 ## Table of Contents
 - Overview
@@ -32,6 +33,7 @@ The main components of this project are organized into directories and files as 
 ├── README.md                   # Project documentation
 ├── docker-compose.yaml         # Docker Compose setup for Airflow, PostgreSQL, and the app
 └── requirements.txt            # Python dependencies
+```
 
 ## Setup
 This project uses Docker to simplify the setup process, ensuring all dependencies and services are easily configured and reproducible. Make sure Docker and Docker Compose are installed on your machine.
