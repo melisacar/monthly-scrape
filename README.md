@@ -1,8 +1,9 @@
 # DHMI Monthly Data Pipeline
-A data pipeline to **automate** the **scraping and transformation** of monthly airport traffic data from the DHMI (State Airports Authority) website. This project uses **Apache Airflow** to **schedule** the pipeline, fetches data with `requests` and `BeautifulSoup`, and stores transformed data in a PostgreSQL database.
----
 
-## Table of Contents
+- A data pipeline to **automate** the **scraping and transformation** of monthly airport traffic data from the DHMI (State Airports Authority) website. This project uses **Apache Airflow** to **schedule** the pipeline, fetches data with `requests` and `BeautifulSoup`, and stores transformed data in a PostgreSQL database.
+---
+## Table of Contents
+
 - Overview
 - Project Structure
 - Setup
