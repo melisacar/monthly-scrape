@@ -4,6 +4,9 @@
 # Ignore Excel temporary files
 ~$*
 
+#Unnecessary
+build-files/
+
 # Byte-compiled files
 __pycache__/
 *.py[cod]
