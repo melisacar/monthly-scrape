@@ -32,44 +32,6 @@ The main components of this project are organized into directories and files as 
 ├── README.md                   # Project documentation
 ├── docker-compose.yaml         # Docker Compose setup for Airflow, PostgreSQL, and the app
 └── requirements.txt            # Python dependencies
-```
-
-
-Here's a comprehensive README file for your project in English, with sections covering the setup, project structure, DAG flow, and database integration. This README assumes that your audience has some familiarity with Docker, Apache Airflow, and Python.
-
-DHMI Monthly Data Pipeline
-A data pipeline to automate the scraping and transformation of monthly airport traffic data from the DHMI (State Airports Authority) website. This project uses Apache Airflow to schedule the pipeline, fetches data with requests and BeautifulSoup, and stores transformed data in a PostgreSQL database.
-
-Table of Contents
-Overview
-Project Structure
-Setup
-Data Pipeline Flow
-Database Integration
-License
-Overview
-This project automates the following tasks:
-
-Scraping: Collects the latest Excel files of airport traffic data from DHMI's website.
-Data Transformation: Transforms the Excel file into a structured format with columns for airport name, domestic/international flights, category, and date.
-Database Storage: Stores processed data into a PostgreSQL database for analysis and reporting.
-Project Structure
-The main components of this project are organized into directories and files as follows:
-
-graphql
-Kodu kopyala
-├── dags
-│   └── data_pipeline_dag.py    # Defines the DAG for Apache Airflow to schedule and run the data pipeline
-├── src
-│   ├── main_scraper.py         # Contains main scraping and data transformation logic
-│   ├── models.py               # Defines the database schema and connects to PostgreSQL
-│   ├── migrations/             # Contains migration files for schema management (optional)
-│   └── alembic.ini             # Configuration for Alembic migrations
-├── .gitignore
-├── Dockerfile                  # Docker configuration for running the app
-├── README.md                   # Project documentation
-├── docker-compose.yaml         # Docker Compose setup for Airflow, PostgreSQL, and the app
-└── requirements.txt            # Python dependencies
 
 ## Setup
 This project uses Docker to simplify the setup process, ensuring all dependencies and services are easily configured and reproducible. Make sure Docker and Docker Compose are installed on your machine.
