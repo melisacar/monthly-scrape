@@ -18,7 +18,8 @@ class Flight_Check(Base):
     erisim_tarihi = Column(Date, nullable=True) 
 
 # Database connection.
-engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
+#engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
+engine = create_engine('postgresql://postgres:secret@database:5432/dhmi-scrape')
 
 # Create tables in the database.
 Base.metadata.create_all(engine)
