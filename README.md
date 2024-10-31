@@ -42,7 +42,7 @@ This project uses Docker to simplify the setup process, ensuring all dependencie
 1. Clone the Repository
 ```bash
 git clone https://github.com/melisacar/monthly-scrape.git
-cd 
+cd monthly-scrape 
 ```
 
 2. Build the Docker Containers
