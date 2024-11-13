@@ -1,9 +1,16 @@
 # DHMI Monthly Flights Data
 
+This project automates the process of downloading, transforming, and saving monthly Excel files published on the General Directorate of State Airports Authority (DHMİ) statistics page. The data is parsed and stored in a PostgreSQL database.
+
+- **Before Use:**
+  - **Database connections** are different from main folder's.
+  - **Class names** are different check before running models.py (Here is `Flights`)
+  - **Table names** are different check before running models.py. (Here is `tum_ucuslar`)
+  - Check before running.
+
 - Built for checking.
 - Scrapes from web (all data).
 - Migrates to the postgres db.
-- Erisim_tarihi column is NULL.
 
 ## Error Handling
 
