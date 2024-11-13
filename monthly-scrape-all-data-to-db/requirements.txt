@@ -1,0 +1,10 @@
+pandas 
+openpyxl 
+pytest
+bs4 
+requests
+schedule
+pytz
+sqlalchemy 
+psycopg2-binary
+alembic
