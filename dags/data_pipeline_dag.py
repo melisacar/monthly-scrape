@@ -1,17 +1,17 @@
 import sys
 from pathlib import Path
 
-# Adding the `src` folder to Python path so our imports work smoothly – all for you!
+# Adding the `src` folder to Python path so our imports work smoothly.
 src_path = Path(__file__).resolve().parent.parent / 'src'
 sys.path.append(str(src_path))
 
-# Importing the main function for scraping – yep, that code you wrote, Melom!
+# Importing the main function for scraping
 from main_scraper import run_main_check
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
-
+##
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
