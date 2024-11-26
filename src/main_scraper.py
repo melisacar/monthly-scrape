@@ -216,7 +216,7 @@ def main_check():
         if excel_content:
             df = transform_excel_file(excel_content)
             print("Yeni veri bulundu. Veritabanına ekleniyor...")
-            save_to_database(df, session)  # Veriyi kaydetmek için save_to_database fonksiyonunu çağır.
+            save_to_database(df, session)  
         else:
             print(f"{latest_href} indirme hatasından dolayı atlandı.")
     else:
