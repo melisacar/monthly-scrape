@@ -7,7 +7,8 @@ Base = declarative_base()
 
 # Define the Flights Check table.
 class Flight_Check(Base):
-    __tablename__ = 'flight_check' 
+    __tablename__ = 'tum_ucuslar_aylik' 
+    __table_args__ = {'schema': 'turizm'}
     
     id=Column(Integer, primary_key=True, autoincrement=True)  
     havalimani=Column(String, nullable=True)
