@@ -20,6 +20,7 @@ venv/
 env/
 ENV/
 venv.bak/
+/venv_win/
 
 # OS files
 .DS_Store
