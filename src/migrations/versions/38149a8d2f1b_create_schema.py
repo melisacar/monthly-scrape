@@ -1,4 +1,4 @@
-"""Delete table
+"""Create schema
 
 Revision ID: 38149a8d2f1b
 Revises: 

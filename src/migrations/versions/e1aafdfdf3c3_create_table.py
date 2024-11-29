@@ -1,4 +1,4 @@
-"""Create turizm schema and updated table
+"""Create table
 
 Revision ID: e1aafdfdf3c3
 Revises: 38149a8d2f1b
@@ -39,7 +39,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Drop tum_ucuslar_aylik table
-    #op.drop_table('tum_ucuslar_aylik', schema='turizm')
-    pass
+    op.drop_table('tum_ucuslar_aylik', schema='turizm')
+
     # Drop turizm schema
     #op.execute('DROP SCHEMA IF EXISTS turizm CASCADE')
