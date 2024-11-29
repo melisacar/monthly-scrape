@@ -1,6 +1,6 @@
 # Define url manually:
-#DATABASE_URL = ("postgresql://postgres:secret@localhost:5432/dhmi-scrape") # While using Alembic
-DATABASE_URL = ("postgresql://postgres:secret@database:5432/dhmi-scrape") # While using Docker
+DATABASE_URL = ("postgresql://postgres:secret@localhost:5432/dhmi-scrape") # While using Alembic
+#DATABASE_URL = ("postgresql://postgres:secret@database:5432/dhmi-scrape") # While using Docker
 
 
 #import os
