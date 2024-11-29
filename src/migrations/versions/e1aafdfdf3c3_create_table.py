@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     # Create turizm schema if not exists
-    op.execute('CREATE SCHEMA IF NOT EXISTS turizm')
+    #op.execute('CREATE SCHEMA IF NOT EXISTS turizm')
 
     # Create tum_ucuslar_aylik table
     op.create_table(
@@ -39,7 +39,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Drop tum_ucuslar_aylik table
-    op.drop_table('tum_ucuslar_aylik', schema='turizm')
-
+    #op.drop_table('tum_ucuslar_aylik', schema='turizm')
+    pass
     # Drop turizm schema
-    op.execute('DROP SCHEMA IF EXISTS turizm CASCADE')
+    #op.execute('DROP SCHEMA IF EXISTS turizm CASCADE')

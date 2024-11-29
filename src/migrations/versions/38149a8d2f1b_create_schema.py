@@ -19,8 +19,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.execute('DROP TABLE IF EXISTS turizm.tum_ucuslar_aylik')
+    # Create schema if it doesn't exist
+    op.execute('CREATE SCHEMA IF NOT EXISTS turizm')
 
 
 def downgrade() -> None:
-    pass
+    # Drop the schema if exists
+    op.execute('DROP SCHEMA IF EXISTS turizm CASCADE')
