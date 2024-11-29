@@ -8,9 +8,7 @@ from sqlalchemy import create_engine
 from models import Base  # models.py import
 from logging.config import fileConfig
 
-config = context.config
-fileConfig(config.config_file_name)
-target_metadata = Base.metadata
+import os
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -28,6 +26,9 @@ if config.config_file_name is not None:
 #target_metadata = None
 # add your model's MetaData object here
 target_metadata = Base.metadata 
+
+# Use DATABASE_URL from environment variables
+DATABASE_URL = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -49,7 +50,7 @@ def run_migrations_offline() -> None:
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=DATABASE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
