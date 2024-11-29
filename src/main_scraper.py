@@ -9,6 +9,9 @@ from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from models import Flight_Check, engine  # Importing the model and engine from models.py
+from sqlalchemy.exc import IntegrityError
+from config import DATABASE_URL
+
 
 # Map month numbers to names
 months_mapping = {
@@ -186,9 +189,15 @@ def save_to_database(df, session):
             tarih=row['Tarih'],
             erisim_tarihi=datetime.today().strftime("%Y-%m-%d")  # Add the current date as the retrieved_at field.
         )
-        session.add(new_record)
+        try:
+            session.add(new_record)  
+            session.commit()  
+        except IntegrityError:  
+            session.rollback()  
+        
+        #session.add(new_record)
 
-    session.commit()
+    #session.commit()
     print("Veri başarıyla veritabanına eklendi.")
 
 
