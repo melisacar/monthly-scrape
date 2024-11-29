@@ -5,7 +5,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from sqlalchemy import UniqueConstraint
 
-from config import DATABASE_URL
+#import os
+
+#DATABASE_URL = os.getenv("DATABASE_URL")
 
 Base = declarative_base()
 
@@ -28,6 +30,8 @@ class Flight_Check(Base):
 # Database connection.
 #engine = create_engine('postgresql://postgres:secret@localhost:5432/dhmi-scrape')
 #engine = create_engine('postgresql://postgres:secret@database:5432/dhmi-scrape')
+
+DATABASE_URL = 'postgresql://postgres:secret@localhost:5432/dhmi-scrape'
 engine = create_engine(DATABASE_URL)
 
 
@@ -38,7 +42,7 @@ engine = create_engine(DATABASE_URL)
 #                      """)
 
 # Create tables in the database.
-Base.metadata.create_all(engine)
+#Base.metadata.create_all(engine)
 
 # Create a session for adding data.
 Session = sessionmaker(bind=engine)
