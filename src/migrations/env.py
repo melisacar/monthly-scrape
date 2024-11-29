@@ -8,12 +8,9 @@ from sqlalchemy import create_engine
 from models import Base  # models.py import
 from logging.config import fileConfig
 
-#import os
+from config import DATABASE_URL
 
-#DATABASE_URL = os.getenv("DATABASE_URL")
-
-
-DATABASE_URL = 'postgresql://postgres:secret@localhost:5432/dhmi-scrape'
+#DATABASE_URL = 'postgresql://postgres:secret@localhost:5432/dhmi-scrape'
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
