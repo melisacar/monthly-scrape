@@ -7,10 +7,8 @@ import ssl
 import urllib3
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 from models import Flight_Check, engine  # Importing the model and engine from models.py
 from sqlalchemy.exc import IntegrityError
-from config import DATABASE_URL
 
 
 # Map month numbers to names
