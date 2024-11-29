@@ -26,6 +26,15 @@ x-airflow-common:
       condition: service_healthy
 
 services:
+  app:
+    build:
+      context: .
+    environment:
+      - ENV=docker
+      - DATABASE_URL=postgresql://postgres:secret@database:5432/dhmi-scrape  # Connection inside Docker 
+    depends_on:
+      - database
+
   database:
     container_name: "database"
     image: "postgres"
