@@ -39,7 +39,9 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Drop tum_ucuslar_aylik table
-    op.drop_table('tum_ucuslar_aylik', schema='turizm')
-
+    #op.drop_table('tum_ucuslar_aylik', schema='turizm')
+    op.execute("""
+        DROP TABLE IF EXISTS turizm.tum_ucuslar_aylik;
+    """)
     # Drop turizm schema
     #op.execute('DROP SCHEMA IF EXISTS turizm CASCADE')
