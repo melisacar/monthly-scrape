@@ -5,7 +5,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from sqlalchemy import UniqueConstraint
 
-from src.config import DATABASE_URL
+from config import DATABASE_URL
 
 Base = declarative_base()
 
