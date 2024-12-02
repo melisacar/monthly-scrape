@@ -2,6 +2,8 @@ from sqlalchemy import func
 from src.models import Flight_Check, Session
 
 
+# Before testing add src.config inside models.py
+
 def check_duplicates():
     session = Session()
 
