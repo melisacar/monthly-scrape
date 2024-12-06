@@ -74,14 +74,25 @@ def extract_month_number(month_string):
     return None
 
 
-def get_latest_month_from_db(session):
+#def get_latest_month_from_db(session):
+#    """
+#    Gets the latest month number from the 'flight_check' table.
+#    """
+#    latest_date = session.query(Flight_Check).order_by(Flight_Check.tarih.desc()).first()
+#    if latest_date:
+#        return latest_date.tarih.month
+#    return 0
+
+
+def get_latest_date_from_db(session):
     """
-    Gets the latest month number from the 'flight_check' table.
+    Gets the latest date from the 'flight_check' table as a datetime.date object.
     """
     latest_date = session.query(Flight_Check).order_by(Flight_Check.tarih.desc()).first()
     if latest_date:
-        return latest_date.tarih.month
-    return 0
+        return latest_date.tarih
+    return datetime(1900, 1, 1).date()  
+
 
 
 def find_newest_month_html(html_content):
@@ -192,10 +203,7 @@ def save_to_database(df, session):
             session.commit()  
         except IntegrityError:  
             session.rollback()  
-        
-        #session.add(new_record)
 
-    #session.commit()
     print("Veri başarıyla veritabanına eklendi.")
 
 
@@ -214,10 +222,21 @@ def main_check():
         return
 
     latest_href = parse_excel_links(html_content)
-    latest_month = get_latest_month_from_db(session)
-    newest_month = find_newest_month_html(html_content)
+    latest_date = get_latest_date_from_db(session)
 
-    if newest_month and newest_month > latest_month:
+    excel_content = download_excel_file(latest_href)
+    if not excel_content:
+        print(f"Excel dosyası indirilemedi: {latest_href}")
+        return
+    
+    sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None)
+    first_sheet = next(iter(sheets_dict.values()))  
+    additional_info = first_sheet.iloc[0, 4]  
+    formatted_date = extract_year_month(additional_info)  # YYYY-MM-DD format
+
+    newest_date = datetime.strptime(formatted_date, "%Y-%m-%d").date()
+
+    if newest_date and newest_date > latest_date:
         print(f"Yeni dosya işleniyor: {latest_href}")
         excel_content = download_excel_file(latest_href)
         if excel_content:
