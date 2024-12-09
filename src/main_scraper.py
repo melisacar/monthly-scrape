@@ -9,7 +9,7 @@ from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 from models import Flight_Check, engine  # Importing the model and engine from models.py
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy import extract
 
 # Map month numbers to names
 months_mapping = {
@@ -60,7 +60,7 @@ def parse_excel_links(html_content):
         class_="badge border border-primary align-middle p-2 rounded-pill list-group-item-action"
     )
     hrefs = [element.get('href') for element in elements]
-    return hrefs[-1]
+    return hrefs
 
 
 def extract_month_number(month_string):
@@ -72,44 +72,6 @@ def extract_month_number(month_string):
         if month_string.strip().upper() == name:
             return month
     return None
-
-
-#def get_latest_month_from_db(session):
-#    """
-#    Gets the latest month number from the 'flight_check' table.
-#    """
-#    latest_date = session.query(Flight_Check).order_by(Flight_Check.tarih.desc()).first()
-#    if latest_date:
-#        return latest_date.tarih.month
-#    return 0
-
-
-def get_latest_date_from_db(session):
-    """
-    Gets the latest date from the 'flight_check' table as a datetime.date object.
-    """
-    latest_date = session.query(Flight_Check).order_by(Flight_Check.tarih.desc()).first()
-    if latest_date:
-        return latest_date.tarih
-    return datetime(1900, 1, 1).date()  
-
-
-
-def find_newest_month_html(html_content):
-    """
-    Checks the month texts from HTML content and returns the largest month number.
-    """
-    soup = BeautifulSoup(html_content, "html.parser")
-    month_numbers = []
-
-    td_elements = soup.find_all('td', class_="text-left")
-    for td in td_elements:
-        month_string = td.get_text()
-        month_number = extract_month_number(month_string)
-        if month_number:
-            month_numbers.append(month_number)
-
-    return max(month_numbers, default=None)
 
 
 def download_excel_file(href):
@@ -125,6 +87,24 @@ def download_excel_file(href):
         print(f"Failed to retrieve {href}, status code: {response.status_code}")
         return None
 
+def check_specific_month_and_year_exists(session, month, year):
+    """
+    Checks if there is any record in the 'flight_check' table with a date matching the given month and year.
+    Returns True if such a record exists, otherwise False.
+
+    :param session: SQLAlchemy session object
+    :param month: The month to check (integer, 1-12)
+    :param year: The year to check (integer, e.g., 2023)
+    """
+    exists = (
+        session.query(Flight_Check)
+        .filter(
+            extract('month', Flight_Check.tarih) == month,  # Belirtilen ay
+            extract('year', Flight_Check.tarih) == year     # Belirtilen yıl
+        )
+        .first()  # İlk eşleşen kaydı getir
+    )
+    return exists is not None
 
 def extract_year_month(date_info):
     """
@@ -211,6 +191,7 @@ def main_check():
     """
     Main function to check for new data, download, and update the database if needed.
     """
+    print("Scraping data...")
     disable_ssl_warnings()
 
     Session = sessionmaker(bind=engine)
@@ -221,32 +202,30 @@ def main_check():
     if not html_content:
         return
 
-    latest_href = parse_excel_links(html_content)
-    latest_date = get_latest_date_from_db(session)
+    hrefs = parse_excel_links(html_content)
 
-    excel_content = download_excel_file(latest_href)
-    if not excel_content:
-        print(f"Excel dosyası indirilemedi: {latest_href}")
-        return
-    
-    sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None)
-    first_sheet = next(iter(sheets_dict.values()))  
-    additional_info = first_sheet.iloc[0, 4]  
-    formatted_date = extract_year_month(additional_info)  # YYYY-MM-DD format
+    for href in hrefs:
+        excel_content = download_excel_file(href)
+        if not excel_content:
+            print(f"Excel dosyası indirilemedi: {href}")
+            return
+        sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None)
+        first_sheet = next(iter(sheets_dict.values()))
+        additional_info = first_sheet.iloc[0, 4]
+        formatted_date = extract_year_month(additional_info)
 
-    newest_date = datetime.strptime(formatted_date, "%Y-%m-%d").date()
+        # Parse the formatted date to extract year and month
+        parsed_date = datetime.strptime(formatted_date, "%Y-%m-%d")
+        year = parsed_date.year
+        month = parsed_date.month
 
-    if newest_date and newest_date > latest_date:
-        print(f"Yeni dosya işleniyor: {latest_href}")
-        excel_content = download_excel_file(latest_href)
-        if excel_content:
+        # Use the function with the extracted month and year
+        if check_specific_month_and_year_exists(session, month, year):
+            print(f"Record exists for {month}/{year}.")
+        else:
             df = transform_excel_file(excel_content)
             print("Yeni veri bulundu. Veritabanına ekleniyor...")
-            save_to_database(df, session)  
-        else:
-            print(f"{latest_href} indirme hatasından dolayı atlandı.")
-    else:
-        print("Yeni bir ay verisi bulunamadı.")
+            save_to_database(df, session)
 
     session.close()
 
