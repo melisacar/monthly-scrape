@@ -29,6 +29,7 @@ The main components of this project are organized into directories and files as 
 │   ├── models.py               # Defines the database schema and connects to PostgreSQL
 │   ├── migrations/             # Contains migration files for schema management (optional)
 │   └── alembic.ini             # Configuration for Alembic migrations
+|   └── config.py       
 ├── .gitignore
 ├── Dockerfile                  # Docker configuration for running the app
 ├── README.md                   # Project documentation
