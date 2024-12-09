@@ -99,10 +99,10 @@ def check_specific_month_and_year_exists(session, month, year):
     exists = (
         session.query(Flight_Check)
         .filter(
-            extract('month', Flight_Check.tarih) == month,  # Belirtilen ay
-            extract('year', Flight_Check.tarih) == year     # Belirtilen yıl
+            extract('month', Flight_Check.tarih) == month,  # Specified month
+            extract('year', Flight_Check.tarih) == year     # Specified year
         )
-        .first()  # İlk eşleşen kaydı getir
+        .first()  # Get first matching record
     )
     return exists is not None
 
@@ -184,7 +184,7 @@ def save_to_database(df, session):
         except IntegrityError:  
             session.rollback()  
 
-    print("Veri başarıyla veritabanına eklendi.")
+    print("Data was successfully added to the database.")
 
 
 def main_check():
@@ -207,7 +207,7 @@ def main_check():
     for href in hrefs:
         excel_content = download_excel_file(href)
         if not excel_content:
-            print(f"Excel dosyası indirilemedi: {href}")
+            print(f"Excel file could not be downloaded: {href}")
             return
         sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None)
         first_sheet = next(iter(sheets_dict.values()))
@@ -224,7 +224,7 @@ def main_check():
             print(f"Record exists for {month}/{year}.")
         else:
             df = transform_excel_file(excel_content)
-            print("Yeni veri bulundu. Veritabanına ekleniyor...")
+            print("New data found. Adding to database...")
             save_to_database(df, session)
 
     session.close()
