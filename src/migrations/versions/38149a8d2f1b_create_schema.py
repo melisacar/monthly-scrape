@@ -20,9 +20,9 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     # Create schema if it doesn't exist
-    op.execute('CREATE SCHEMA IF NOT EXISTS turizm')
+    op.execute('CREATE SCHEMA IF NOT EXISTS etl')
 
 
 def downgrade() -> None:
     # Drop the schema if exists
-    op.execute('DROP SCHEMA IF EXISTS turizm CASCADE')
+    op.execute('DROP SCHEMA IF EXISTS etl CASCADE')

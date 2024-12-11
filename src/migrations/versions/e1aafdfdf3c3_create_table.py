@@ -33,15 +33,15 @@ def upgrade() -> None:
         sa.Column('tarih', sa.Date, nullable=True),
         sa.Column('erisim_tarihi', sa.Date, nullable=True),
         sa.UniqueConstraint('havalimani', 'hat_turu', 'kategori', 'tarih', name='unique_ucuslar'),
-        schema='turizm'
+        schema='etl'
     )
 
 
 def downgrade() -> None:
     # Drop tum_ucuslar_aylik table
-    #op.drop_table('tum_ucuslar_aylik', schema='turizm')
+    #op.drop_table('tum_ucuslar_aylik', schema='etl')
     op.execute("""
-        DROP TABLE IF EXISTS turizm.tum_ucuslar_aylik;
+        DROP TABLE IF EXISTS etl.tum_ucuslar_aylik;
     """)
     # Drop turizm schema
-    #op.execute('DROP SCHEMA IF EXISTS turizm CASCADE')
+    #op.execute('DROP SCHEMA IF EXISTS etl CASCADE')
