@@ -14,7 +14,7 @@ class Flight_Check(Base):
     __tablename__ = 'tum_ucuslar_aylik' 
     __table_args__ = (
                       UniqueConstraint('havalimani', 'hat_turu','kategori', 'tarih', name='unique_ucuslar'), # Avoid duplicate data.
-                      {'schema': 'turizm'}
+                      {'schema': 'etl'}
                       )
 
     id=Column(Integer, primary_key=True, autoincrement=True)  
