@@ -81,14 +81,14 @@ Once Airflow is running, access the Airflow web interface at `http://localhost:8
 - `save_to_database(df, session)`: Saves the processed data to the database.
 
 ## Database Integration
-### Database Schema: `models.py`
-The database schema, defined in models.py, specifies the structure of the flight_check table, which includes columns for airport name, flight type, number of flights, category, and date.
+### Database Schema: 
+The database schema, defined in `models.py`, specifies the structure of the flight_check table, which includes columns for airport name, flight type, number of flights, category, and date.
 
 ### Connecting to PostgreSQL
-The database connection string in `models.py` connects to the `dhmi-scrape` database. The Docker setup in docker-compose.yaml exposes this database to the Airflow DAGs and the scraping script.
+The database connection string in `config.py` connects to the `dhmi-scrape` database. The Docker setup in docker-compose.yaml exposes this database to the Airflow DAGs and the scraping script.
 
 ### Storing Processed Data
-The `save_to_database` function commits new rows to the database. Each entry includes the airport name, type of flight (domestic/international), the number of flights, and the category.
+The `save_to_database` function commits new rows to the database. Each entry includes the airport name, type of flight (domestic/international), the number of flights, category, date and data retrieval date.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/melisacar/monthly-scrape/blob/main/LICENSE) file for details.
