@@ -204,28 +204,43 @@ def main_check():
 
     hrefs = parse_excel_links(html_content)
 
+    # Download all new files and collect cumulative DataFrames
+    all_data = []
     for href in hrefs:
         excel_content = download_excel_file(href)
         if not excel_content:
             print(f"Excel file could not be downloaded: {href}")
-            return
+            continue
         sheets_dict = pd.read_excel(BytesIO(excel_content), sheet_name=None)
         first_sheet = next(iter(sheets_dict.values()))
         additional_info = first_sheet.iloc[0, 4]
         formatted_date = extract_year_month(additional_info)
 
-        # Parse the formatted date to extract year and month
         parsed_date = datetime.strptime(formatted_date, "%Y-%m-%d")
         year = parsed_date.year
         month = parsed_date.month
 
-        # Use the function with the extracted month and year
         if check_specific_month_and_year_exists(session, month, year):
             print(f"Record exists for {month}/{year}.")
+            continue
+
+        df = transform_excel_file(excel_content)
+        all_data.append((year, month, df))
+
+    # Sort ascending so we can diff sequentially
+    all_data.sort(key=lambda x: (x[0], x[1]))
+
+    # Calculate monthly delta from cumulative and save
+    for i, (year, month, df) in enumerate(all_data):
+        if month == 1 or i == 0:
+            monthly_df = df
         else:
-            df = transform_excel_file(excel_content)
-            print("New data found. Adding to database...")
-            save_to_database(df, session)
+            prev_df = all_data[i - 1][2]
+            monthly_df = df.copy()
+            monthly_df['Num'] = df['Num'].values - prev_df['Num'].values
+
+        print(f"New data found for {month}/{year}. Adding to database...")
+        save_to_database(monthly_df, session)
 
     session.close()
 
