@@ -1,4 +1,4 @@
-FROM apache/airflow:latest
+FROM apache/airflow:2.10.1
 
 # UTF-8 settings.
 ENV PYTHONUTF8=1
